@@ -1,0 +1,16 @@
+Victor Frenkel
+Seshu Yamajala
+BioSwarm -- Parallel Programming Project
+
+Overview
+---------------
+BioSwarm is a simulation of a few types of insects in an environment with dynamically changing metabolisms and attributes such as food, hazards, and chemical/physical markers (pheromones, light flashes, etc).
+
+Phase One
+---------------
+A serial implementation of our project to figure out algorithms and expected behavior.
+
+
+Phase Two
+---------------
+A parallelized version of phase one with algorithms that run on multiple places and threads.
