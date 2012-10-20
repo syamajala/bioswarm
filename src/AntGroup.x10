@@ -19,10 +19,4 @@ public class AntGroup extends ActorGroup {
             }
         }
     }
-        
-public def this() {
-    
-}
-
-
 }
