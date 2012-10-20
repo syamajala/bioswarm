@@ -3,9 +3,15 @@ public class FireflyGroup extends ActorGroup {
 
     def this(n:Int) {
 	numActors = n;
+<<<<<<< HEAD
+	actorid = new Array[Int](numActors);
+	actorPos = new Array[Int](numActors);
+	actorHealth = new Array[Int](numActors);
+=======
 	actorid = new Array[Int](numActors, (p:Int) => p);
 	actorPos = new Array[Int](3*numActors);
 	actorHealth = new Array[Int](numActors, (p:Int) => 100);	
+>>>>>>> cad9a53bc29d08f0abe7451aef1e3d4484a6496a
     }
 
     def updateScene():void {

@@ -1,6 +1,4 @@
-public class FireflyGroup extends ActorGroup {
-    val actorFlashFreq:Array[Int] = new Array[Int](numActors, (p:Int) => rand.nextInt(maxValue));
-
+public class AntGroup extends ActorGroup {
     def this(n:Int) {
 	numActors = n;
 	actorid = new Array[Int](numActors, (p:Int) => p);
@@ -18,9 +16,8 @@ public class FireflyGroup extends ActorGroup {
 	    if (this.alive(i)) {
 		this.actorPos(3*i+1) += rand.nextInt(maxValue);
 		this.actorPos(3*i+2) += rand.nextInt(maxValue);
-		this.actorPos(3*i+3) += rand.nextInt(maxValue);
 	    }
 	}
     }
-    
+        
 }

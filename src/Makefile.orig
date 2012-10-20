@@ -1,9 +1,21 @@
-## DO NOT MODIFY THE CONTENTS OF THIS FILE
-
 X10C=${X10_HOME}/bin/x10c++
-
 FLAGS=-VERBOSE_CHECKS=TRUE -O -NO_CHECKS -noassert -cxx-prearg -O2
+<<<<<<< HEAD
+SRCS=BioSwarm.x10 FireflyGroup.x10 ActorGroup.x10
 TARBALL=bioswarm_project.tar.gz
+
+EXES=BioSwarm
+
+all: $(EXES)
+
+.SUFFIXES:
+.SUFFIXES: .x10
+
+BioSwarm: $(SRCS)
+
+.x10:
+	$(X10C) $(FLAGS) -o $@ $@.x10
+=======
 
 SRCS=BioSwarm.x10 FireflyGroup.x10 ActorGroup.x10 Scene.x10 Actor.x10 AntGroup.x10 EnvironmentGroup.x10 Pheromone.x10
 
@@ -11,6 +23,12 @@ all: BioSwarm
 
 BioSwarm: $(SRCS)
 	$(X10C) $(FLAGS) -o BioSwarm $(SRCS)
+>>>>>>> cad9a53bc29d08f0abe7451aef1e3d4484a6496a
+
+ship: $(TARBALL)
+
+$(TARBALL): $(SHIP)
+	tar cvfz $(TARBALL) $(TURNIN)
 
 clean:
 	rm -f *.h *.cc BioSwarm
