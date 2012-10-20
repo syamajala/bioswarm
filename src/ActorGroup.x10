@@ -1,8 +1,7 @@
 import x10.util.Random;
 
 public abstract class ActorGroup {
-    var numActors:Int;
-    var actorid:Array[Int](1);
+    var size:Int;
     var actorPos:Array[Double](1);
     var actorHealth:Array[Double](1);
     
@@ -21,7 +20,7 @@ public abstract class ActorGroup {
     }
     
     def updateHealth():void {
-        for (var i:Int = 0; i < this.numActors; i++) {
+        for (var i:Int = 0; i < this.size; i++) {
             if (this.alive(i))
                 this.actorHealth(i)--;
         }
