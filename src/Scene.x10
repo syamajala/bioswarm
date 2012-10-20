@@ -9,6 +9,13 @@ public class Scene {
     //TODO: make this use a file.
     def loadScene():void {
         // initialize the scene with actors, environment props, food, etc. here.
+        this.VF_loadScene001(); //keeping our test cases separate and clean.
+        
+        
+    }
+    
+    // TODO: replace the need for these functions with files.
+    def VF_loadScene001():void {
         this.start_frame = 0;
         this.end_frame = 1000;
         
@@ -16,7 +23,6 @@ public class Scene {
         
         this.actorGroups.add(new FireflyGroup(500));
         this.actorGroups.add(new AntGroup(500));
-        
     }
     
     def stepScene():void {
