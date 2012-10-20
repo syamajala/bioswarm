@@ -13,17 +13,17 @@ public abstract class ActorGroup {
     abstract def updatePos():void;
     
     def alive(i:Int):Boolean {
-		if (this.actorHealth(i) < 1e-6) { 
-		    return false;
-		} else { 
-		    return true;
-		}
+        if (this.actorHealth(i) < 1e-6) { 
+            return false;
+        } else { 
+            return true;
+        }
     }
     
     def updateHealth():void {
-		for (var i:Int = 0; i < this.numActors; i++) {
-		    if (this.alive(i))
-			this.actorHealth(i)--;
-		}
+        for (var i:Int = 0; i < this.numActors; i++) {
+            if (this.alive(i))
+                this.actorHealth(i)--;
+        }
     }
 }

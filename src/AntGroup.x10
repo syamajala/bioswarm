@@ -14,8 +14,8 @@ public class AntGroup extends ActorGroup {
     def updatePos():void {
         for (var i:Int = 0; i < numActors; i++) {
             if (this.alive(i)) {
-            this.actorPos(3*i+1) += rand.nextInt(maxValue) as Double;
-            this.actorPos(3*i+2) += rand.nextInt(maxValue) as Double;
+	            this.actorPos(3*i+1) += rand.nextInt(maxValue) as Double;
+	            this.actorPos(3*i+2) += rand.nextInt(maxValue) as Double;
             }
         }
     }
