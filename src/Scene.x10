@@ -24,5 +24,13 @@ public class Scene {
             ag.updateScene();
         }
     }
+
+    def envQuery(x:Double, y:Double, z:Double, d:Double):Boolean {
+        for (var i:Int = 0; i < actorGroups.size; i++) {
+            if (Math.sqrt(Math.pow((x-propGroups(i)(0)), 2) + Math.pow((y-propGroups(i)(1)), 2) + Math.pow((z-propGroups(i)(2)), 2)) <= d)
+                return true;
+        }
+        return false;
+    }
     
 }
