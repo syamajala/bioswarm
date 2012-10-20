@@ -2,7 +2,6 @@ import x10.util.Random;
 
 public abstract class ActorGroup {
     var numActors:Int;
-    var actorid:Array[Int](1);
     var actorPos:Array[Double](1);
     var actorHealth:Array[Double](1);
     

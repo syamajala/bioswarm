@@ -5,7 +5,7 @@ X10C=${X10_HOME}/bin/x10c++
 FLAGS=-VERBOSE_CHECKS=TRUE -O -NO_CHECKS -noassert -cxx-prearg -O2
 TARBALL=bioswarm_project.tar.gz
 
-SRCS=BioSwarm.x10 FireflyGroup.x10 ActorGroup.x10 Scene.x10 Actor.x10 AntGroup.x10 EnvironmentGroup.x10 Pheromone.x10
+SRCS=BioSwarm.x10 FireflyGroup.x10 ActorGroup.x10 Scene.x10 AntGroup.x10 EnvAffectorGroup.x10 Pheromone.x10 Box.x10
 
 all: BioSwarm
 
