@@ -6,7 +6,7 @@ public class FireflyGroup extends ActorGroup {
 	numActors = n;
 	actorid = new Array[Int](numActors);
 	actorPos = new Array[Int](numActors);
-	actorHleath = new Array[Int](numActors);
+	actorHealth = new Array[Int](numActors);
     }
 
     def updateScene():void {
