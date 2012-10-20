@@ -1,1 +1,0 @@
-//this file will contain algorithms that manipulate arrays in the scene that hold various attributes about the actor. Note that we do not want to construct an actual Actor object and be storing an array of those. ActorGroups in the scene will hold the attributes we want to modify.
