@@ -4,14 +4,14 @@ import x10.util.Pair;
 public class AntGroup extends ActorGroup {
     def this(n:Int) {
         this.size = n;
-        this.actorPos = new Array[Double](3*size, (p:Int) => rand.nextInt() as Double);
-        this.actorHealth = new Array[Double](size, (p:Int) => 100.0);
-        this.onAffector = new Array[Boolean](size, (p:Int) => false);
+        this.pos = new Array[Double](3*size, (p:Int) => rand.nextInt() as Double);
+        this.health = new Array[Double](size, (p:Int) => 100.0);
+        this.on_affector = new Array[Boolean](size, (p:Int) => false);
     }
 
     def this(n:Int, r:Box) {
         this.size = n;
-        this.actorPos = new Array[Double](3*size);
+        this.pos = new Array[Double](3*size);
         for (var i:Int = 0; i < size; i++) {
 
             var x:Double = rand.nextInt(r.l as Int) as Double + r.v1(0);
@@ -23,20 +23,20 @@ public class AntGroup extends ActorGroup {
                 y = rand.nextInt(r.w as Int) as Double + r.v1(1);
             }
 
-            this.actorPos(3*i) = x;
-            this.actorPos(3*i+1) = y;
-            this.actorPos(3*i+2) = z;
+            this.pos(3*i) = x;
+            this.pos(3*i+1) = y;
+            this.pos(3*i+2) = z;
         }
 
-        this.actorHealth = new Array[Double](size, (p:Int) => 100.0);
-        this.onAffector = new Array[Boolean](size, (p:Int) => false);
+        this.health = new Array[Double](size, (p:Int) => 100.0);
+        this.on_affector = new Array[Boolean](size, (p:Int) => false);
     }
 
     def this(n:Int, pos:Array[Double]) {
         this.size = n;
-        this.actorPos = new Array[Double](3*size, (p:Int) => pos(p));
-        this.actorHealth = new Array[Double](size, (p:Int) => 100.0);
-        this.onAffector = new Array[Boolean](size, (p:Int) => false);
+        this.pos = new Array[Double](3*size, (p:Int) => pos(p));
+        this.health = new Array[Double](size, (p:Int) => 100.0);
+        this.on_affector = new Array[Boolean](size, (p:Int) => false);
     }
 
     def updateScene():void {
@@ -45,19 +45,19 @@ public class AntGroup extends ActorGroup {
             if (!this.alive(i))
                 continue;
 
-            var env:ArrayList[Pair[Int,Int]] = this.scene.envAffectorQuery(this.actorPos(3*i), this.actorPos(3*i+1), 0, rand.nextInt(maxValue) as Double);
+            var env:ArrayList[Pair[Int,Int]] = this.scene.envAffectorQuery(this.pos(3*i), this.pos(3*i+1), 0, rand.nextInt(maxValue) as Double);
 
-            if (env.isEmpty() || this.onAffector(i)) {
-                this.actorPos(3*i) += rand.nextInt(maxValue) as Double;
-                this.actorPos(3*i+1) += rand.nextInt(maxValue) as Double;
-                this.onAffector(i) = false;
+            if (env.isEmpty() || this.on_affector(i)) {
+                this.pos(3*i) += rand.nextInt(maxValue) as Double;
+                this.pos(3*i+1) += rand.nextInt(maxValue) as Double;
+                this.on_affector(i) = false;
             } else {
                 var j:Pair[Int, Int] = env(rand.nextInt(env.size()));
-                this.actorPos(3*i) = scene.affectorGroups(j.first).pos(3*j.second);
-                this.actorPos(3*i+1) = scene.affectorGroups(j.first).pos(3*j.second+1);
-                this.onAffector(i) = true;
+                this.pos(3*i) = scene.affectorGroups(j.first).pos(3*j.second);
+                this.pos(3*i+1) = scene.affectorGroups(j.first).pos(3*j.second+1);
+                this.on_affector(i) = true;
                 //                if (scene.affectorGroups(j.first).type == "Hazard") 
-                //                    this.actorHealth(i)--;
+                //                    this.health(i)--;
             }
         }
     }
