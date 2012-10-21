@@ -23,9 +23,9 @@ public class AntGroup extends ActorGroup {
                 y = rand.nextInt(r.w as Int) as Double + r.v1(1);
             }
 
-            this.actorPos(3*i+1) = x;
-            this.actorPos(3*i+2) = y;
-            this.actorPos(3*i+3) = z;
+            this.actorPos(3*i) = x;
+            this.actorPos(3*i+1) = y;
+            this.actorPos(3*i+2) = z;
         }
 
         this.actorHealth = new Array[Double](size, (p:Int) => 100.0);
@@ -45,16 +45,16 @@ public class AntGroup extends ActorGroup {
             if (!this.alive(i))
                 continue;
 
-            var env:ArrayList[Pair[Int,Int]] = this.scene.envAffectorQuery(this.actorPos(3*i+1), this.actorPos(3*i+2), 0, rand.nextInt(maxValue) as Double);
+            var env:ArrayList[Pair[Int,Int]] = this.scene.envAffectorQuery(this.actorPos(3*i), this.actorPos(3*i+1), 0, rand.nextInt(maxValue) as Double);
 
             if (env.isEmpty() || this.onAffector(i)) {
+                this.actorPos(3*i) += rand.nextInt(maxValue) as Double;
                 this.actorPos(3*i+1) += rand.nextInt(maxValue) as Double;
-                this.actorPos(3*i+2) += rand.nextInt(maxValue) as Double;
                 this.onAffector(i) = false;
             } else {
                 var j:Pair[Int, Int] = env(rand.nextInt(env.size()));
-                this.actorPos(3*i+1) = scene.affectorGroups(j.first).pos(3*j.second);
-                this.actorPos(3*i+2) = scene.affectorGroups(j.first).pos(3*j.second+1);
+                this.actorPos(3*i) = scene.affectorGroups(j.first).pos(3*j.second);
+                this.actorPos(3*i+1) = scene.affectorGroups(j.first).pos(3*j.second+1);
                 this.onAffector(i) = true;
                 //                if (scene.affectorGroups(j.first).type == "Hazard") 
                 //                    this.actorHealth(i)--;

@@ -22,9 +22,9 @@ public class FireflyGroup extends ActorGroup {
                 z = rand.nextInt(r.h as Int) as Double;
             }
 
-            this.actorPos(3*i+1) = x;
-            this.actorPos(3*i+2) = y;
-            this.actorPos(3*i+3) = z;
+            this.actorPos(3*i) = x;
+            this.actorPos(3*i+1) = y;
+            this.actorPos(3*i+2) = z;
         }
 
         this.actorHealth = new Array[Double](size, (p:Int) => 100.0);
@@ -40,9 +40,9 @@ public class FireflyGroup extends ActorGroup {
         for (var i:Int = 0; i < this.size; i++) {
             if (!this.alive(i))
                 continue;
+            this.actorPos(3*i) += rand.nextInt(maxValue) as Double;
             this.actorPos(3*i+1) += rand.nextInt(maxValue) as Double;
-            this.actorPos(3*i+2) += rand.nextInt(maxValue) as Double;
-            this.actorPos(3*i+3) += rand.nextInt(maxValue) as Double;           
+            this.actorPos(3*i+2) += rand.nextInt(maxValue) as Double;           
             //this.actorHealth(i)--;      
         }
     }
