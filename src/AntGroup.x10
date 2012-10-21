@@ -56,9 +56,9 @@ public class AntGroup extends ActorGroup {
                 this.pos(3*i) = scene.affectorGroups(j.first).pos(3*j.second);
                 this.pos(3*i+1) = scene.affectorGroups(j.first).pos(3*j.second+1);
                 this.on_affector(i) = true;
-                //                if (scene.affectorGroups(j.first).type == "Hazard") 
-                //                    this.health(i)--;
-            }
+                if (scene.affectorGroups(j.first).afftype == afftypes.Fire)
+                    this.health(i) = 0.0;            
+            }                
         }
     }
 }

@@ -12,10 +12,13 @@
  */
 
 import x10.util.ArrayList;
-
-
+import x10.util.Random;
 public abstract class EnvAffectorGroup {
     var size:Int;
     var pos:ArrayList[Double];
+    var afftype:Int;
     
+    static val rand = new Random(System.nanoTime());
+    static val types = new EnvAffectorType();
 }
+

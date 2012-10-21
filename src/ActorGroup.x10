@@ -9,7 +9,7 @@ public abstract class ActorGroup {
 
     static val rand = new Random(System.nanoTime());
     static val maxValue = 10;
-
+    static val afftypes = new EnvAffectorType();
     abstract def updateScene():void;
     
     def alive(i:Int):Boolean {
