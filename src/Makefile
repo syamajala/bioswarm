@@ -13,4 +13,4 @@ BioSwarm: $(SRCS)
 	$(X10C) $(FLAGS) -o BioSwarm $(SRCS)
 
 clean:
-	rm -f *.h *.cc BioSwarm
+	rm -f *.h *.cc BioSwarm *~

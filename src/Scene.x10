@@ -30,12 +30,18 @@ public class Scene {
         
         this.affectorGroups = new Array[EnvAffectorGroup](this.num_affector_groups);
         this.affectorGroups(0) = new PheromoneGroup();
+
+        for (var i:Int = 0; i < actorGroups.size; i++)
+            actorGroups(i).scene = this;
     }
         
     def stepScene():void {
         for (var ag:Int = 0; ag < actorGroups.size; ag++) {
             actorGroups(ag).updateScene();
         }
+
+        for (var i:Int = 0; i < actorGroups.size; i++)
+            actorGroups(i).scene = this;
     }
 
     //TODO: set up an acceleration structure so we prune affectors that are too far away to be checked (spatial hashmap, 3d grid).

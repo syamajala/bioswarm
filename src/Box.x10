@@ -3,6 +3,8 @@ public class Box {
     var v2:Array[Double];
     var v3:Array[Double];
     var v4:Array[Double];
+    var l:Double;
+    var w:Double;
     var h:Double;
     
     def this(l:Double, w:Double, h:Double, p:Array[Double]{self.size == 3}) {
@@ -11,7 +13,9 @@ public class Box {
         this.v3 = new Array[Double](3);
         v3(0) = p(0)+l; v3(1) = p(1)+w; v3(2) = p(2);
         this.v4 = new Array[Double](3, (i:Int) => (i == 0) ? p(i)+l : p(i));       
-        this.h = h;
+        this.l = l;
+        this.w = w;
+        this.h = h;       
     }
 
     def contained(x:Double, y:Double, z:Double):Boolean {
