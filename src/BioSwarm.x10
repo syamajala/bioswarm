@@ -19,7 +19,7 @@ public class BioSwarm {
         var end_frame:Int = s.end_frame;
         
         for (frame in start_frame..end_frame) {
-            Console.OUT.println("frame: " + frame);
+            Console.OUT.println("FRAME " + frame);
             
             //progress the simulation one timestep.
             s.stepScene();

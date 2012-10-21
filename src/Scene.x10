@@ -92,7 +92,7 @@ public class Scene {
 	        for (var actor_id:int=0; actor_id < this.actorGroups(group_id).size; actor_id++) {
 	            var outstr:String = ("ACTOR; GROUP=" + group_id + "; ID=" + actor_id + "; ");
 	            val group:ActorGroup = this.actorGroups(group_id);
-	            outstr += "POS=(" + group.pos(3*actor_id) + ", " + group.pos(3*actor_id+1) + ", " + group.pos(3*actor_id+2) + "); ";
+	            outstr += "POS=(" + group.pos(3*actor_id) + "," + group.pos(3*actor_id+1) + "," + group.pos(3*actor_id+2) + "); ";
 	            
 	            output_printer.println(outstr);
 	        }
