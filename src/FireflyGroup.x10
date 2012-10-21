@@ -3,7 +3,7 @@ public class FireflyGroup extends ActorGroup {
 
     def this(n:Int) {
         this.size = n;
-        this.pos = new Array[Double](3*size, (p:Int) => rand.nextInt() as Double);
+        this.pos = new Array[Double](3*size, (p:Int) => rand.nextInt(1000) as Double);
         this.health = new Array[Double](size, (p:Int) => 100.0);
     }
 
