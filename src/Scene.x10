@@ -58,7 +58,7 @@ public class Scene {
         return result;
     }
     
-    def distToAffector(x:double, y:double, z:double, group:int, aff:int) : double {
+    private def distToAffector(x:double, y:double, z:double, group:int, aff:int) : double {
         return Math.sqrt(Math.pow((x-this.affectorGroups(group).pos(3*aff)), 2)
                 			 + Math.pow((y-this.affectorGroups(group).pos(3*aff + 1)), 2)
                 			 + Math.pow((z-this.affectorGroups(group).pos(3*aff + 2)), 2));
