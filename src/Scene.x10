@@ -28,11 +28,21 @@ public class Scene {
         this.actorGroups(1) = new AntGroup(500);
         
         this.affectorGroups = new Array[EnvAffectorGroup](1);
-        this.affectorGroups(0) = new PheromoneGroup();
-
+        this.affectorGroups(0) = new FireGroup(10);
+        //        this.affectorGroups(1) = new FoodGroup(10);
         for (var i:Int = 0; i < actorGroups.size; i++)
             actorGroups(i).scene = this;
     }
+
+    /*    def VF_loadScene002():void {
+        this.start_frame = 1;
+        this.end_frame = 10;
+
+        this.actorGroups = new Array[ActorGroup](1);
+        val p = new Array[Double](3, (p:Int) => 0.0);
+        Box b = new Box(5, 5, 5, p);
+        this.actorGroups(0) = new AntGroup(10, b);        
+        }*/
         
     def stepScene():void {
         for (var ag:Int = 0; ag < actorGroups.size; ag++) {
