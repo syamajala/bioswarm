@@ -13,9 +13,7 @@ public class Scene {
     
     def loadScene():void {
         // initialize the scene with actors, environment props, food, etc. here.
-        this.VF_loadScene001(); //keeping our test cases separate and clean.
-        
-        
+        this.VF_loadScene001(); //keeping our test cases separate and clean.                
     }
     
     // TODO: replace the need for these functions with scene files.
@@ -32,12 +30,18 @@ public class Scene {
         
         this.affectorGroups = new Array[EnvAffectorGroup](this.num_affector_groups);
         this.affectorGroups(0) = new PheromoneGroup();
+
+        for (var i:Int = 0; i < actorGroups.size; i++)
+            actorGroups(i).scene = this;
     }
-    
+        
     def stepScene():void {
         for (var ag:Int = 0; ag < actorGroups.size; ag++) {
             actorGroups(ag).updateScene();
         }
+
+        for (var i:Int = 0; i < actorGroups.size; i++)
+            actorGroups(i).scene = this;
     }
 
     //TODO: set up an acceleration structure so we prune affectors that are too far away to be checked (spatial hashmap, 3d grid).
@@ -62,17 +66,5 @@ public class Scene {
         return Math.sqrt(Math.pow((x-this.affectorGroups(group).pos(3*aff)), 2)
                 			 + Math.pow((y-this.affectorGroups(group).pos(3*aff + 1)), 2)
                 			 + Math.pow((z-this.affectorGroups(group).pos(3*aff + 2)), 2));
-    }
-    
-    
-    
-    
-//     def envQuery(x:Double, y:Double, z:Double, d:Double):Boolean {
-//         for (var i:Int = 0; i < propGroups.size; i++) {
-//             if (Math.sqrt(Math.pow((x-propGroups(i)(0)), 2) + Math.pow((y-propGroups(i)(1)), 2) + Math.pow((z-propGroups(i)(2)), 2)) <= d)
-//                 return true;
-//         }
-//         return false;
-//     }
-    
+    }    
 }
