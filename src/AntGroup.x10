@@ -1,8 +1,8 @@
 public class AntGroup extends ActorGroup {
     def this(n:Int) {
-        this.numActors = n;
-        this.actorPos = new Array[Double](3*numActors, (p:Int) => rand.nextInt(maxValue) as Double);
-        this.actorHealth = new Array[Double](numActors, (p:Int) => 100.0);  
+        this.size = n;
+        this.actorPos = new Array[Double](3*size);
+        this.actorHealth = new Array[Double](size, (p:Int) => 100.0);  
     }
 
     def this(n:Int, r:Box) {

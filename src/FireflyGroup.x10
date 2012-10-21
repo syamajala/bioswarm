@@ -1,10 +1,10 @@
 public class FireflyGroup extends ActorGroup {
-    val actorFlashFreq:Array[Int] = new Array[Int](numActors, (p:Int) => rand.nextInt(maxValue));
+    val actorFlashFreq:Array[Int] = new Array[Int](size, (p:Int) => rand.nextInt(maxValue));
 
     def this(n:Int) {
-        this.numActors = n;
-        this.actorPos = new Array[Double](3*numActors);
-        this.actorHealth = new Array[Double](numActors, (p:Int) => 100.0);
+        this.size = n;
+        this.actorPos = new Array[Double](3*size);
+        this.actorHealth = new Array[Double](size, (p:Int) => 100.0);
     }
 
     def updateScene():void {
@@ -19,6 +19,7 @@ public class FireflyGroup extends ActorGroup {
             this.actorPos(3*i+1) += rand.nextInt(maxValue) as Double;
             this.actorPos(3*i+2) += rand.nextInt(maxValue) as Double;
             this.actorPos(3*i+3) += rand.nextInt(maxValue) as Double;
+
         }
     }
 }
