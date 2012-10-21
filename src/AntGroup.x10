@@ -5,7 +5,6 @@ public class AntGroup extends ActorGroup {
     def this(n:Int) {
         this.size = n;
         this.pos = new Array[Double](3*size, (p:Int) => ((p%3) == 2) ? 0.0 : rand.nextInt(1000) as Double);
-        this.pos = new Array[Double](3*size);            
         this.health = new Array[Double](size, (p:Int) => 100.0);
         this.on_affector = new Array[Boolean](size, (p:Int) => false);
     }
