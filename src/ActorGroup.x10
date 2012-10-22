@@ -4,6 +4,7 @@ public abstract class ActorGroup {
     var size:Int;
     var pos:Array[Double](1);
     var health:Array[Double](1);
+    var metabolism:Array[Double](1);
     var on_affector:Array[Boolean](1);
     var scene:Scene;
 

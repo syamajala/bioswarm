@@ -1,6 +1,4 @@
 public class PheromoneGroup extends EnvAffectorGroup {
-    var strength:Array[Double];
-    
-    
+    var strength:Array[Double];    
 }
 
