@@ -4,11 +4,11 @@ import x10.util.Pair;
 public class FireflyGroup extends ActorGroup {
     val actorFlashFreq:Array[Int] = new Array[Int](size, (p:Int) => rand.nextInt(maxValue));
 
-    def this(n:Int) {
+    def this(n:Int, scene:Scene) {
+        this.scene = scene;
         this.size = n;
         this.pos = new Array[Double](3*size, (p:Int) => rand.nextInt(1000) as Double);
         this.health = new Array[Double](size, (p:Int) => 100.0);
-        this.metabolism = new Array[Double](size, (p:Int) => 0.0);
         this.on_affector = new Array[Boolean](size, (p:Int) => false);
     }
 
@@ -21,19 +21,12 @@ public class FireflyGroup extends ActorGroup {
             var y:Double = rand.nextInt(r.w as Int) as Double + r.v1(1);
             var z:Double = rand.nextInt(r.h as Int) as Double;
 
-            while (!r.contained(x, y, z)) {
-                x = rand.nextInt(r.l as Int) as Double + r.v1(0);
-                y = rand.nextInt(r.w as Int) as Double + r.v1(1);
-                z = rand.nextInt(r.h as Int) as Double;
-            }
-
             this.pos(3*i) = x;
             this.pos(3*i+1) = y;
             this.pos(3*i+2) = z;
         }
 
         this.health = new Array[Double](size, (p:Int) => 100.0);
-        this.metabolism = new Array[Double](size, (p:Int) => 0.0);
         this.on_affector = new Array[Boolean](size, (p:Int) => false);
     }
 
@@ -41,11 +34,10 @@ public class FireflyGroup extends ActorGroup {
         this.size = n;
         this.pos = new Array[Double](3*size, (p:Int) => pos(p));
         this.health = new Array[Double](size, (p:Int) => 100.0);
-        this.metabolism = new Array[Double](size, (p:Int) => 0.0);
         this.on_affector = new Array[Boolean](size, (p:Int) => false);
     }
 
-    def updateScene():void {
+    public def stepActors():void {
         for (var i:Int = 0; i < this.size; i++) {
             if (!this.alive(i))
                 continue;
@@ -63,13 +55,12 @@ public class FireflyGroup extends ActorGroup {
                 this.pos(3*i+1) = scene.affectorGroups(j.first).pos(3*j.second+1);
                 this.pos(3*i+2) += scene.affectorGroups(j.first).pos(3*j.second+2);
                 this.on_affector(i) = true;
-                if (scene.affectorGroups(j.first).afftype == afftypes.Fire)
+                if (scene.affectorGroups(j.first).group_type == EnvAffectorType.Fire)
                     this.health(i) = 0.0;
-                else if (scene.affectorGroups(j.first).afftype == afftypes.Food) {
+                else if (scene.affectorGroups(j.first).group_type == EnvAffectorType.Food) {
                     var a:FoodGroup = scene.affectorGroups(j.first) as FoodGroup;
                     if (a.available(j.second)) {
                         a.quantity(j.second) = a.quantity(j.second) - 1;
-                        this.metabolism(i)++;
                     }
                 }
             } 

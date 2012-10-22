@@ -1,13 +1,14 @@
 import x10.util.ArrayList;
 
+// we happen to know how much of this affector will be in the scene at the start, so implemented with Array.
 public class FoodGroup extends EnvAffectorGroup {
     var quantity:Array[Double];
 
     def this(n:Int) {
         this.size = n;
         this.pos = new ArrayList[Double](3*size);
-        this.quantity = new Array[Double](size, (p:Int) => 100.0);        
-        this.afftype = types.Food;
+        this.quantity = new Array[Double](size, (p:Int) => 100.0);
+        this.group_type = EnvAffectorType.Food;
         for (var i:Int = 0; i < 3*size; i++) {
             if (i%3 == 0) 
                 pos.add(0.0);
@@ -19,7 +20,7 @@ public class FoodGroup extends EnvAffectorGroup {
     def this(n:Int, r:Box) {
         this.size = n;
         this.pos = new ArrayList[Double](3*size);
-        this.afftype = types.Food;
+        this.group_type = types.Food;
         this.quantity = new Array[Double](size, (p:Int) => 100.0);        
         for (var i:Int = 0; i < size; i++) {
 
@@ -42,7 +43,7 @@ public class FoodGroup extends EnvAffectorGroup {
         this.pos = new ArrayList[Double](3*size);
         for (var i:Int = 0; i < p.size; i++)
             this.pos.add(p(i));
-        this.afftype = types.Food;
+        this.group_type = EnvAffectorType.Food;
     }
 
     def available(i:Int):Boolean {
@@ -51,4 +52,10 @@ public class FoodGroup extends EnvAffectorGroup {
         else
             return false;
     }
+    
+    public def stepDynamicAttributes():void {
+    	// TODO: auto-generated method stub
+    }
+
+
 }

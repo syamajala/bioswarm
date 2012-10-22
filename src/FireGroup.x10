@@ -5,7 +5,7 @@ public class FireGroup extends EnvAffectorGroup {
     def this(n:Int) {
         this.size = n;
         this.pos = new ArrayList[Double](3*size);
-        this.afftype = types.Fire;
+        this.group_type = EnvAffectorType.Fire;
         for (var i:Int = 0; i < 3*size; i++) {
             if (i%3 == 0) 
                 this.pos.add(0.0);
@@ -17,7 +17,7 @@ public class FireGroup extends EnvAffectorGroup {
     def this(n:Int, r:Box) {
         this.size = n;
         this.pos = new ArrayList[Double](3*size);
-        this.afftype = types.Fire;
+        this.group_type = EnvAffectorType.Fire;
 
         for (var i:Int = 0; i < size; i++) {
 
@@ -40,7 +40,12 @@ public class FireGroup extends EnvAffectorGroup {
         this.pos = new ArrayList[Double](3*size);
         for (var i:Int = 0; i < p.size; i++)
             this.pos.add(p(i));
-        this.afftype = types.Fire;
+        this.group_type = types.Fire;
     }
+    
+	public def stepDynamicAttributes():void {
+	    // TODO: auto-generated method stub
+	}
+
 
 }

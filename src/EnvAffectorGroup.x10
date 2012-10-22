@@ -16,9 +16,12 @@ import x10.util.Random;
 public abstract class EnvAffectorGroup {
     var size:Int;
     var pos:ArrayList[Double];
-    var afftype:Int;
+    var group_type:Int;
     
     static val rand = new Random(System.nanoTime());
     static val types = new EnvAffectorType();
+    
+    //env affectors implement this to model decay of strength, rotting, etc.
+    public abstract def stepDynamicAttributes():void;
 }
 

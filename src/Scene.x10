@@ -17,6 +17,20 @@ public class Scene {
     }
     
     // TODO: replace the need for these functions with scene files.
+    def VF_loadScene000():void {
+        this.start_frame = 1;
+        this.end_frame = 200;
+        
+        // want food, home trail phero, and food trail phero affectors.
+        this.affectorGroups = new Array[EnvAffectorGroup](3);
+        this.affectorGroups(0) = new FoodGroup(100);
+        this.affectorGroups(1) = new PheromoneGroup(EnvAffectorType.antHomeTrailPheromone, 1.1);
+        this.affectorGroups(2) = new PheromoneGroup(EnvAffectorType.antFoodTrailPheromone, 1.1);
+        
+        this.actorGroups = new Array[ActorGroup](1);
+        this.actorGroups(0) = new AntGroup(500, this);
+    }
+    
     def VF_loadScene001():void {
         this.start_frame = 1;
         this.end_frame = 50;
@@ -47,13 +61,13 @@ public class Scene {
     }
         
     def stepScene():void {
-        for (var ag:Int = 0; ag < actorGroups.size; ag++) {
-            actorGroups(ag).updateScene();
+        for (var ag:int = 0; ag < actorGroups.size; ag++) {
+            actorGroups(ag).stepActors();
         }
-
-        //TODO: remove this and have a reference to the scene be passed in at the constructor of an actorgroup.
-        for (var i:Int = 0; i < actorGroups.size; i++)
-            actorGroups(i).scene = this;
+        
+        for (var pg:int = 0; pg < this.affectorGroups.size; pg++) {
+            this.affectorGroups(pg).stepDynamicAttributes();
+        }
         
         this.current_frame++;
     }
