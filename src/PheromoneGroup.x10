@@ -1,4 +1,3 @@
-public class PheromoneGroup extends EnvAffectorGroup {
-    var strength:Array[Double];    
+public abstract class PheromoneGroup extends EnvAffectorGroup {
+    var strength:Array[Double];
 }
-

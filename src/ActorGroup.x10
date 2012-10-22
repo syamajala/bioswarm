@@ -7,7 +7,7 @@ public abstract class ActorGroup {
     var metabolism:Array[Double](1);
     var on_affector:Array[Boolean](1);
     var scene:Scene;
-
+    
     static val rand = new Random(System.nanoTime());
     static val maxValue = 10;
     static val afftypes = new EnvAffectorType();

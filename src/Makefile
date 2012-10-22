@@ -7,7 +7,7 @@ TARBALL=bioswarm_project.tar.gz
 
 SRCS=BioSwarm.x10 FireflyGroup.x10 ActorGroup.x10 Scene.x10 AntGroup.x10 EnvAffectorGroup.x10 PheromoneGroup.x10 Box.x10 FoodGroup.x10 FireGroup.x10 EnvAffectorType.x10
 
-all: BioSwarm
+all: clean BioSwarm
 
 BioSwarm: $(SRCS)
 	$(X10C) $(FLAGS) -o BioSwarm $(SRCS)

@@ -10,8 +10,7 @@ public class Scene {
     
     var actorGroups:Array[ActorGroup];
     var affectorGroups:Array[EnvAffectorGroup];
-    
-    
+        
     def loadScene():void {
         // initialize the scene with actors, environment props, food, etc. here.
         this.VF_loadScene001(); //keeping our test cases separate and clean.
@@ -21,33 +20,30 @@ public class Scene {
     def VF_loadScene001():void {
         this.start_frame = 1;
         this.end_frame = 50;
-        
-        this.actorGroups = new Array[ActorGroup](2);
-        
-        this.actorGroups(0) = new FireflyGroup(500);
-        this.actorGroups(1) = new AntGroup(500);
-        
+
         this.affectorGroups = new Array[EnvAffectorGroup](2);
         this.affectorGroups(0) = new FireGroup(100);
         this.affectorGroups(1) = new FoodGroup(100);
-        for (var i:Int = 0; i < actorGroups.size; i++)
-            actorGroups(i).scene = this;
+        
+        this.actorGroups = new Array[ActorGroup](2);
+        
+        this.actorGroups(0) = new FireflyGroup(500, this);
+        this.actorGroups(1) = new AntGroup(500, this);
+
     }
 
     def VF_loadScene002():void {
         this.start_frame = 1;
         this.end_frame = 10;
 
-        this.actorGroups = new Array[ActorGroup](1);
         val p = new Array[Double](3, (p:Int) => 0.0);
         val b = new Box(50.0, 50.0, 50.0, p);
-        this.actorGroups(0) = new AntGroup(100, b);
-        
+     
         this.affectorGroups = new Array[EnvAffectorGroup](1);
         this.affectorGroups(0) = new FireGroup(10, b);
         
-        for (var i:Int = 0; i < actorGroups.size; i++)
-            actorGroups(i).scene = this;
+        this.actorGroups = new Array[ActorGroup](1);
+        this.actorGroups(0) = new AntGroup(100, b, this);
     }
         
     def stepScene():void {
@@ -66,11 +62,11 @@ public class Scene {
     // returns pairs of integers that represent which group an affector is in, and its index within that group.
     // this pair of numbers can be used to get the affector position, or any other attribute from the scene.
     // e.g. for position: scene.affectorGroups(group).pos(3*aff) gets the x position of affector aff in affector group, group.
-    def envAffectorQuery(x:double, y:double, z:double, radius:double):ArrayList[Pair[int, int]] {
-        var result:ArrayList[Pair[int,int]] = new ArrayList[Pair[int, int]]();
+    def envAffectorQuery(x:Double, y:Double, z:Double, radius:Double):ArrayList[Pair[Int, Int]] {
+        var result:ArrayList[Pair[Int,Int]] = new ArrayList[Pair[Int, Int]]();
         
-        for (var group:int = 0; group < this.affectorGroups.size; group++) {
-            for (var aff:int = 0; aff < this.affectorGroups(group).size; aff++) {
+        for (var group:Int = 0; group < this.affectorGroups.size; group++) {
+            for (var aff:Int = 0; aff < this.affectorGroups(group).size; aff++) {
                 if (distToAffector(x, y, z, group, aff) < radius) {
                 	result.add(new Pair(group, aff));
                 }
@@ -84,27 +80,6 @@ public class Scene {
         return Math.sqrt(Math.pow((x-this.affectorGroups(group).pos(3*aff)), 2)
                 			 + Math.pow((y-this.affectorGroups(group).pos(3*aff + 1)), 2)
                 			 + Math.pow((z-this.affectorGroups(group).pos(3*aff + 2)), 2));
-    }
-    
-    
-    def actorQuery(x:double, y:double, z:double, radius:double) : ArrayList[Pair[int, int]] {
-        var result:ArrayList[Pair[int,int]] = new ArrayList[Pair[int,int]]();
-        
-        for (var group:int = 0; group < this.actorGroups.size; group++) {
-            for (var actor:int = 0; actor < this.actorGroups(group).size; actor++) {
-                if (distToActor(x,y,z,group,actor) < radius) {
-                	result.add(new Pair(group, actor));
-                }
-            }
-        }
-        
-        return result;
-    }
-    
-    private def distToActor(x:double, y:double, z:double, group:int, actor:int) : double {
-        return Math.sqrt(Math.pow((x-this.actorGroups(group).pos(3*actor)), 2)
-                + Math.pow((y-this.actorGroups(group).pos(3*actor + 1)), 2)
-                + Math.pow((z-this.actorGroups(group).pos(3*actor + 2)), 2));
     }
     
     
