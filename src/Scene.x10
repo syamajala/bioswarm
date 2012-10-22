@@ -27,7 +27,7 @@ public class Scene {
         this.actorGroups(0) = new FireflyGroup(500);
         this.actorGroups(1) = new AntGroup(500);
         
-        this.affectorGroups = new Array[EnvAffectorGroup](1);
+        this.affectorGroups = new Array[EnvAffectorGroup](2);
         this.affectorGroups(0) = new FireGroup(100);
         this.affectorGroups(1) = new FoodGroup(100);
         for (var i:Int = 0; i < actorGroups.size; i++)
