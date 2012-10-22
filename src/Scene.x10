@@ -66,11 +66,11 @@ public class Scene {
     // returns pairs of integers that represent which group an affector is in, and its index within that group.
     // this pair of numbers can be used to get the affector position, or any other attribute from the scene.
     // e.g. for position: scene.affectorGroups(group).pos(3*aff) gets the x position of affector aff in affector group, group.
-    def envAffectorQuery(x:Double, y:Double, z:Double, radius:Double):ArrayList[Pair[Int, Int]] {
-        var result:ArrayList[Pair[Int,Int]] = new ArrayList[Pair[Int, Int]]();
+    def envAffectorQuery(x:double, y:double, z:double, radius:double):ArrayList[Pair[int, int]] {
+        var result:ArrayList[Pair[int,int]] = new ArrayList[Pair[int, int]]();
         
-        for (var group:Int = 0; group < this.affectorGroups.size; group++) {
-            for (var aff:Int = 0; aff < this.affectorGroups(group).size; aff++) {
+        for (var group:int = 0; group < this.affectorGroups.size; group++) {
+            for (var aff:int = 0; aff < this.affectorGroups(group).size; aff++) {
                 if (distToAffector(x, y, z, group, aff) < radius) {
                 	result.add(new Pair(group, aff));
                 }
@@ -84,6 +84,27 @@ public class Scene {
         return Math.sqrt(Math.pow((x-this.affectorGroups(group).pos(3*aff)), 2)
                 			 + Math.pow((y-this.affectorGroups(group).pos(3*aff + 1)), 2)
                 			 + Math.pow((z-this.affectorGroups(group).pos(3*aff + 2)), 2));
+    }
+    
+    
+    def actorQuery(x:double, y:double, z:double, radius:double) : ArrayList[Pair[int, int]] {
+        var result:ArrayList[Pair[int,int]] = new ArrayList[Pair[int,int]]();
+        
+        for (var group:int = 0; group < this.actorGroups.size; group++) {
+            for (var actor:int = 0; actor < this.actorGroups(group).size; actor++) {
+                if (distToActor(x,y,z,group,actor) < radius) {
+                	result.add(new Pair(group, actor));
+                }
+            }
+        }
+        
+        return result;
+    }
+    
+    private def distToActor(x:double, y:double, z:double, group:int, actor:int) : double {
+        return Math.sqrt(Math.pow((x-this.actorGroups(group).pos(3*actor)), 2)
+                + Math.pow((y-this.actorGroups(group).pos(3*actor + 1)), 2)
+                + Math.pow((z-this.actorGroups(group).pos(3*actor + 2)), 2));
     }
     
     
