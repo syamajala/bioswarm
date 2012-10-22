@@ -3,11 +3,11 @@ import x10.util.Pair;
 
 public class FireflyGroup extends ActorGroup {
     var actorFlashFreq:Array[Int]; 
-    var actorFlashing:Array[Boolean];
     var actorCurIntensity:Array[Double];
     var stepCount:Array[Int];
     var actorFlashIntensity:Array[Double];
-    
+
+    // initialize position of all actors to hive location
     def this(n:Int, scene:Scene) {
         this.size = n;
         this.pos = new Array[Double](3*size, (p:Int) => 0.0);
@@ -15,12 +15,12 @@ public class FireflyGroup extends ActorGroup {
         this.scene = scene;
         this.acttype = ActorType.Firefly;
         this.actorFlashFreq = new Array[Int](size, (p:Int) => rand.nextInt(maxValue));
-        this.actorFlashing =  new Array[Boolean](size, (p:Int) => false);
         this.stepCount =  new Array[Int](size, (p:Int) => 0);
         this.actorFlashIntensity = new Array[Double](size, (p:Int) => rand.nextInt(maxValue) as Double);
         this.actorCurIntensity = new Array[Double](size, (p:Int) => 0.0);
     }
 
+    // initialize all actors to position within some bounding box
     def this(n:Int, r:Box, scene:Scene) {
         this.size = n;
         this.pos = new Array[Double](3*size);
@@ -34,12 +34,13 @@ public class FireflyGroup extends ActorGroup {
         this.scene = scene;
         this.acttype = ActorType.Firefly;
         this.actorFlashFreq = new Array[Int](size, (p:Int) => rand.nextInt(maxValue));
-        this.actorFlashing =  new Array[Boolean](size, (p:Int) => false);
         this.stepCount =  new Array[Int](size, (p:Int) => 0);
         this.actorFlashIntensity = new Array[Double](size, (p:Int) => rand.nextInt(maxValue) as Double);
         this.actorCurIntensity = new Array[Double](size, (p:Int) => 0.0);
     }
 
+
+    // initialize actors to positions given by array
     def this(n:Int, pos:Array[Double], scene:Scene) {
         this.size = n;
         this.pos = new Array[Double](3*size, (p:Int) => pos(p));
@@ -47,7 +48,6 @@ public class FireflyGroup extends ActorGroup {
         this.scene = scene;
         this.acttype = ActorType.Firefly;
         this.actorFlashFreq = new Array[Int](size, (p:Int) => rand.nextInt(maxValue));
-        this.actorFlashing =  new Array[Boolean](size, (p:Int) => false);
         this.stepCount =  new Array[Int](size, (p:Int) => 0);
         this.actorFlashIntensity = new Array[Double](size, (p:Int) => rand.nextInt(maxValue) as Double);
         this.actorCurIntensity = new Array[Double](size, (p:Int) => 0.0);
@@ -57,25 +57,28 @@ public class FireflyGroup extends ActorGroup {
         for (var i:Int = 0; i < this.size; i++) {
             if (!this.alive(i))
                 continue;
-
+            
+            // keep track of how many steps its been since we've flashed
+            // then reset our intensity, and become less bright as time goes on.
             if (this.stepCount(i) == this.actorFlashFreq(i)) {
-                this.actorFlashing(i) = true;
                 this.stepCount(i) = 0;
                 this.actorCurIntensity(i) = this.actorFlashFreq(i);
             }
             else {
-                this.actorFlashing(i) = false;
                 this.actorCurIntensity(i) = this.actorCurIntensity(i) - 1;
                 this.stepCount(i) = this.stepCount(i) + 1;
                 }
-            
+
+            // find out what other actors are around us
             var env:ArrayList[Pair[Int,Int]] = this.scene.actorQuery(this.pos(3*i), this.pos(3*i+1), this.pos(3*i+2), rand.nextInt(2*maxValue) as Double);
-            
+
+            // if there are no actors around us or we are at the hive try to spread out
             if (env.isEmpty() || ((this.pos(3*i) == 0.0) && (this.pos(3*i+1) == 0.0) && (this.pos(3*i+2) == 0.0))) {
                 this.pos(3*i) += rand.nextInt(2*maxValue)-maxValue as Double;
                 this.pos(3*i+1) += rand.nextInt(2*maxValue)-maxValue as Double;
-                this.pos(3*i+2) += rand.nextInt(2*maxValue)-maxValue as Double;                        
-            } else {
+                this.pos(3*i+2) += rand.nextInt(2*maxValue)-maxValue as Double;                  
+            } else { 
+                // find the index of firefly group
                 var fireflygroup:Int = -1;
                 for (var j:Int = 0; j < this.scene.actorGroups.size; j++) {
                     if (this.scene.actorGroups(j).acttype == ActorType.Firefly) {
@@ -84,18 +87,21 @@ public class FireflyGroup extends ActorGroup {
                     }
                 }
                 if (fireflygroup != -1) {
+                    // find a firefly with a current intensity that is bighter than ours and go near it.
                     var a:Int = this.envFind(fireflygroup, env, i);
                     if (a != -1) {                        
                             this.pos(3*i) = this.pos(3*a) + 2;
                             this.pos(3*i+1) = this.pos(3*a+1) + 2;
                             this.pos(3*i+2) = this.pos(3*a+2) + 2;
                     }
+                    // otherwise just go somewhere else
                     else {
                         this.pos(3*i) += rand.nextInt(2*maxValue)-maxValue as Double;
                         this.pos(3*i+1) += rand.nextInt(2*maxValue)-maxValue as Double;
                         this.pos(3*i+2) += rand.nextInt(2*maxValue)-maxValue as Double;                        
                     }                    
                 } else {
+                    // if we couldn't find the firefly group for some reason, just go somewhere.
                         this.pos(3*i) += rand.nextInt(2*maxValue)-maxValue as Double;
                         this.pos(3*i+1) += rand.nextInt(2*maxValue)-maxValue as Double;
                         this.pos(3*i+2) += rand.nextInt(2*maxValue)-maxValue as Double;
