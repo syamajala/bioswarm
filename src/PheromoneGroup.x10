@@ -7,6 +7,7 @@ public class PheromoneGroup extends EnvAffectorGroup {
     var group_type:int;
     
     def this(group_type:int, decay_rate:double) {
+        this.strength = new ArrayList[double]();
         this.decay_rate = decay_rate;
         this.group_type = group_type;
     }

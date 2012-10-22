@@ -5,6 +5,7 @@ public class AntGroup extends ActorGroup {
     var ant_home_trail_pheromone_id:int;
     var ant_food_trail_pheromone_id:int;
     var food_affector_id:int;
+    val step_distance:double = 5.0;
     
     var search_radius:Array[double];
     
@@ -14,7 +15,7 @@ public class AntGroup extends ActorGroup {
         this.size = n;
         this.pos = new Array[double](3*size, (p:Int) => 0.0);
         this.health = new Array[double](size, (p:Int) => 100.0);
-        this.search_radius = new Array[double](size, (p:Int) => 20.0);
+        this.search_radius = new Array[double](size, (p:Int) => rand.nextDouble()*5.0 + 20.0);
         //this.digestion_rate = new Array[Double](size, (p:Int) => 0.0);
         //this.on_affector = new Array[Boolean](size, (p:Int) => false);
         this.scene = scene;
@@ -38,7 +39,7 @@ public class AntGroup extends ActorGroup {
         }
 
         this.health = new Array[Double](size, (p:Int) => 100.0);
-        this.search_radius = new Array[double](size, (p:Int) => 20.0);
+        this.search_radius = new Array[double](size, (p:Int) => rand.nextDouble()*5.0 + 20.0);
         //this.digestion_rate = new Array[Double](size, (p:Int) => 0.0);
         //this.on_affector = new Array[Boolean](size, (p:Int) => false);
         this.scene = scene;
@@ -80,6 +81,22 @@ public class AntGroup extends ActorGroup {
 
             var env:ArrayList[Pair[Int,Int]] = this.scene.envAffectorQuery(this.pos(3*i), this.pos(3*i+1), 0, rand.nextInt(maxValue) as Double);
 
+            //move out in a random direction, with some variance.
+            var dir:Array[double](1) = [0.0 as double,0.0 as double,0.0 as double];
+            if (dir == [0.0,0.0,0.0]) {
+                Console.OUT.println("ZERO ACKNOWLEDGED");
+            	val range_mod:double = this.step_distance/2;
+                dir = [rand.nextDouble()*this.step_distance - range_mod,
+            	       rand.nextDouble()*this.step_distance - range_mod,
+            	       0.0];
+            	
+            } else { //perturb, but mainly stay along original dir.
+                val factor:double = 1/10.0;
+                val factor_mod:double = factor/2;
+                dir(0) += rand.nextDouble()*this.step_distance*factor - factor_mod;
+                dir(1) += rand.nextDouble()*this.step_distance*factor - factor_mod;
+            }
+            
             
             
             
