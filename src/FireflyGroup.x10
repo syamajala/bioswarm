@@ -4,6 +4,7 @@ import x10.util.Pair;
 public class FireflyGroup extends ActorGroup {
     var actorFlashFreq:Array[Int]; 
     var actorFlashing:Array[Boolean];
+    var actorCurIntensity:Array[Double];
     var stepCount:Array[Int];
     var actorFlashIntensity:Array[Double];
     
@@ -17,6 +18,7 @@ public class FireflyGroup extends ActorGroup {
         this.actorFlashing =  new Array[Boolean](size, (p:Int) => false);
         this.stepCount =  new Array[Int](size, (p:Int) => 0);
         this.actorFlashIntensity = new Array[Double](size, (p:Int) => rand.nextInt(maxValue) as Double);
+        this.actorCurIntensity = new Array[Double](size, (p:Int) => 0.0);
     }
 
     def this(n:Int, r:Box, scene:Scene) {
@@ -35,6 +37,7 @@ public class FireflyGroup extends ActorGroup {
         this.actorFlashing =  new Array[Boolean](size, (p:Int) => false);
         this.stepCount =  new Array[Int](size, (p:Int) => 0);
         this.actorFlashIntensity = new Array[Double](size, (p:Int) => rand.nextInt(maxValue) as Double);
+        this.actorCurIntensity = new Array[Double](size, (p:Int) => 0.0);
     }
 
     def this(n:Int, pos:Array[Double], scene:Scene) {
@@ -47,6 +50,7 @@ public class FireflyGroup extends ActorGroup {
         this.actorFlashing =  new Array[Boolean](size, (p:Int) => false);
         this.stepCount =  new Array[Int](size, (p:Int) => 0);
         this.actorFlashIntensity = new Array[Double](size, (p:Int) => rand.nextInt(maxValue) as Double);
+        this.actorCurIntensity = new Array[Double](size, (p:Int) => 0.0);
     }
 
     public def stepActors():void {
@@ -57,18 +61,20 @@ public class FireflyGroup extends ActorGroup {
             if (this.stepCount(i) == this.actorFlashFreq(i)) {
                 this.actorFlashing(i) = true;
                 this.stepCount(i) = 0;
+                this.actorCurIntensity(i) = this.actorFlashFreq(i);
             }
             else {
                 this.actorFlashing(i) = false;
+                this.actorCurIntensity(i) = this.actorCurIntensity(i) - 1;
                 this.stepCount(i) = this.stepCount(i) + 1;
                 }
             
-            var env:ArrayList[Pair[Int,Int]] = this.scene.actorQuery(this.pos(3*i), this.pos(3*i+1), this.pos(3*i+2), rand.nextInt(maxValue) as Double);
+            var env:ArrayList[Pair[Int,Int]] = this.scene.actorQuery(this.pos(3*i), this.pos(3*i+1), this.pos(3*i+2), rand.nextInt(2*maxValue) as Double);
             
             if (env.isEmpty() || ((this.pos(3*i) == 0.0) && (this.pos(3*i+1) == 0.0) && (this.pos(3*i+2) == 0.0))) {
-                this.pos(3*i) += rand.nextInt(maxValue) as Double;
-                this.pos(3*i+1) += rand.nextInt(maxValue) as Double;
-                this.pos(3*i+2) += rand.nextInt(maxValue) as Double;                        
+                this.pos(3*i) += rand.nextInt(2*maxValue)-maxValue as Double;
+                this.pos(3*i+1) += rand.nextInt(2*maxValue)-maxValue as Double;
+                this.pos(3*i+2) += rand.nextInt(2*maxValue)-maxValue as Double;                        
             } else {
                 var fireflygroup:Int = -1;
                 for (var j:Int = 0; j < this.scene.actorGroups.size; j++) {
@@ -78,31 +84,34 @@ public class FireflyGroup extends ActorGroup {
                     }
                 }
                 if (fireflygroup != -1) {
-                    var a:Int = this.envFind(fireflygroup, env);
-                    if (a != -1) {
-                        var act:Pair[Int, Int] = env(a);
-                        if (this.actorFlashing(act.second)) {
-                            this.pos(3*i) = scene.actorGroups(act.first).pos(3*act.second) + 2;
-                            this.pos(3*i+1) = scene.actorGroups(act.first).pos(3*act.second+1) + 2;
-                            this.pos(3*i+2) = scene.actorGroups(act.first).pos(3*act.second+2) + 2;
-                        }
+                    var a:Int = this.envFind(fireflygroup, env, i);
+                    if (a != -1) {                        
+                            this.pos(3*i) = this.pos(3*a) + 2;
+                            this.pos(3*i+1) = this.pos(3*a+1) + 2;
+                            this.pos(3*i+2) = this.pos(3*a+2) + 2;
                     }
                     else {
-                        this.pos(3*i) += rand.nextInt(maxValue) as Double;
-                        this.pos(3*i+1) += rand.nextInt(maxValue) as Double;
-                        this.pos(3*i+2) += rand.nextInt(maxValue) as Double;
-                    }
-                }            
+                        this.pos(3*i) += rand.nextInt(2*maxValue)-maxValue as Double;
+                        this.pos(3*i+1) += rand.nextInt(2*maxValue)-maxValue as Double;
+                        this.pos(3*i+2) += rand.nextInt(2*maxValue)-maxValue as Double;                        
+                    }                    
+                } else {
+                        this.pos(3*i) += rand.nextInt(2*maxValue)-maxValue as Double;
+                        this.pos(3*i+1) += rand.nextInt(2*maxValue)-maxValue as Double;
+                        this.pos(3*i+2) += rand.nextInt(2*maxValue)-maxValue as Double;
+                }        
             }
         }
     }
 
-    def envFind(i:Int, env:ArrayList[Pair[Int,Int]]):Int {
+    def envFind(i:Int, env:ArrayList[Pair[Int,Int]], c:Int):Int {
         var j:Pair[Int, Int];
         for (var x:Int = 0; x < env.size(); x++) {
             j = env(x);
-            if(j.first == i)
-                return i;                          
+            if (j.first == i) {
+                if (this.actorCurIntensity(j.second) > this.actorCurIntensity(c))
+                    return x;
+            }
         }
         return -1;
     }
