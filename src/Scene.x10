@@ -16,16 +16,15 @@ public class Scene {
         this.VF_loadScene000(); //keeping our test cases separate and clean.
     }
     
-    // TODO: replace the need for these functions with scene files.
     def VF_loadScene000():void {
         this.start_frame = 1;
-        this.end_frame = 50;
+        this.end_frame = 140;
         
         // want food, home trail phero, and food trail phero affectors.
         this.affectorGroups = new Array[EnvAffectorGroup](3);
-        this.affectorGroups(0) = new FoodGroup(100);
-        this.affectorGroups(1) = new PheromoneGroup(EnvAffectorType.antHomeTrailPheromone, 1.1);
-        this.affectorGroups(2) = new PheromoneGroup(EnvAffectorType.antFoodTrailPheromone, 1.1);
+        this.affectorGroups(0) = new FoodGroup(1, [50.0, 50.0, 0.0]);
+        this.affectorGroups(1) = new HiveEntranceGroup(1, [0.0 as double,0.0 as double,0.0 as double]);
+        this.affectorGroups(2) = new PheromoneGroup(EnvAffectorType.antFoodTrailPheromone, 2.0);
         
         this.actorGroups = new Array[ActorGroup](1);
         this.actorGroups(0) = new AntGroup(500, this);
@@ -45,20 +44,6 @@ public class Scene {
         this.actorGroups(1) = new AntGroup(500, this);
 
     }
-
-    def VF_loadScene002():void {
-        this.start_frame = 1;
-        this.end_frame = 10;
-
-        val p = new Array[Double](3, (p:Int) => 0.0);
-        val b = new Box(50.0, 50.0, 50.0, p);
-     
-        this.affectorGroups = new Array[EnvAffectorGroup](1);
-        this.affectorGroups(0) = new FireGroup(10, b);
-        
-        this.actorGroups = new Array[ActorGroup](1);
-        this.actorGroups(0) = new AntGroup(100, b, this);
-    }
         
     def stepScene():void {
         for (var ag:int = 0; ag < actorGroups.size; ag++) {
@@ -72,7 +57,7 @@ public class Scene {
         this.current_frame++;
     }
 
-    //TODO: set up an acceleration structure so we prune affectors that are too far away to be checked (spatial hashmap, 3d grid).
+    //TODO: maybe set up an acceleration structure so we prune affectors that are too far away to be checked (spatial hashmap, 3d grid).
     // returns pairs of integers that represent which group an affector is in, and its index within that group.
     // this pair of numbers can be used to get the affector position, or any other attribute from the scene.
     // e.g. for position: scene.affectorGroups(group).pos(3*aff) gets the x position of affector aff in affector group, group.
@@ -82,7 +67,7 @@ public class Scene {
         for (var group:Int = 0; group < this.affectorGroups.size; group++) {
             for (var aff:Int = 0; aff < this.affectorGroups(group).size; aff++) {
                 if (distToAffector(x, y, z, group, aff) < radius) {
-                	result.add(new Pair(group, aff));
+                	result.add(new Pair(this.affectorGroups(group).group_type, aff));
                 }
             }
         }

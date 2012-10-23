@@ -13,7 +13,7 @@ public abstract class ActorGroup {
     public abstract def stepActors():void;
     
     def alive(i:Int):Boolean {
-        if (this.health(i) < 1e-6) { 
+        if (this.health(i) < 1.0) { 
             return false;
         } else { 
             return true;
