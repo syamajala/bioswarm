@@ -1,7 +1,7 @@
 import x10.io.Console;
 import x10.io.File;
 import x10.io.Printer;
-
+import x10.util.Timer;
 public class BioSwarm {
 
     public static def main(argv:Array[String]{self.rank==1}) {
@@ -10,14 +10,14 @@ public class BioSwarm {
         val output_file:File = new File("output.bswarm");
         val p:Printer = output_file.printer();
         
-        
         Console.OUT.println("Initializing scene...");
+
         var s:Scene = new Scene();
         s.loadScene();
         
         var start_frame:Int = s.start_frame;
         var end_frame:Int = s.end_frame;
-        
+        val start = Timer.nanoTime();        
         for (frame in start_frame..end_frame) {
             Console.OUT.println("FRAME " + frame);
             
@@ -27,10 +27,11 @@ public class BioSwarm {
             //save out scene representation at current frame to file.
             s.outputSimState(p);
         }
-        
+        val stop = Timer.nanoTime();
         p.flush();
         
         Console.OUT.println("Simulation Complete.");
+        Console.OUT.println("Time: " + (stop-start)*Math.pow(10, -9));
     }
     
 }

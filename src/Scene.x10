@@ -51,7 +51,7 @@ public class Scene {
         this.end_frame = 1000;
 
         val p = new Array[Double](3, (p:Int) => 0.0);
-        val b = new Box(50.0, 50.0, 50.0, p);
+        val b = new Box(10.0, 10.0, 10.0, p);
      
         this.affectorGroups = new Array[EnvAffectorGroup](1);
         this.affectorGroups(0) = new FireGroup(10);

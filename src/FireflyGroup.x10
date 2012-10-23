@@ -16,7 +16,7 @@ public class FireflyGroup extends ActorGroup {
         this.acttype = ActorType.Firefly;
         this.actorFlashFreq = new Array[Int](size, (p:Int) => rand.nextInt(maxValue));
         this.stepCount =  new Array[Int](size, (p:Int) => 0);
-        this.actorFlashIntensity = new Array[Double](size, (p:Int) => rand.nextInt(maxValue) as Double);
+        this.actorFlashIntensity = new Array[Double](size, (p:Int) => maxValue*rand.nextDouble());
         this.actorCurIntensity = new Array[Double](size, (p:Int) => 0.0);
     }
 
@@ -25,9 +25,9 @@ public class FireflyGroup extends ActorGroup {
         this.size = n;
         this.pos = new Array[Double](3*size);
         for (var i:Int = 0; i < size; i++) {
-            this.pos(3*i) = rand.nextInt(r.l as Int) as Double + r.v1(0);
-            this.pos(3*i+1) = rand.nextInt(r.w as Int) as Double + r.v1(1);
-            this.pos(3*i+2) = rand.nextInt(r.h as Int) as Double;
+            this.pos(3*i) = r.l*rand.nextDouble() + r.v1(0);
+            this.pos(3*i+1) = r.w*rand.nextDouble() + r.v1(1);
+            this.pos(3*i+2) = r.h*rand.nextDouble();
         }
 
         this.health = new Array[Double](size, (p:Int) => 100.0);
@@ -35,7 +35,7 @@ public class FireflyGroup extends ActorGroup {
         this.acttype = ActorType.Firefly;
         this.actorFlashFreq = new Array[Int](size, (p:Int) => rand.nextInt(maxValue));
         this.stepCount =  new Array[Int](size, (p:Int) => 0);
-        this.actorFlashIntensity = new Array[Double](size, (p:Int) => rand.nextInt(maxValue) as Double);
+        this.actorFlashIntensity = new Array[Double](size, (p:Int) => maxValue*rand.nextDouble());
         this.actorCurIntensity = new Array[Double](size, (p:Int) => 0.0);
     }
 
@@ -49,7 +49,7 @@ public class FireflyGroup extends ActorGroup {
         this.acttype = ActorType.Firefly;
         this.actorFlashFreq = new Array[Int](size, (p:Int) => rand.nextInt(maxValue));
         this.stepCount =  new Array[Int](size, (p:Int) => 0);
-        this.actorFlashIntensity = new Array[Double](size, (p:Int) => rand.nextInt(maxValue) as Double);
+        this.actorFlashIntensity = new Array[Double](size, (p:Int) => maxValue*rand.nextDouble());
         this.actorCurIntensity = new Array[Double](size, (p:Int) => 0.0);
     }
 
@@ -70,13 +70,13 @@ public class FireflyGroup extends ActorGroup {
                 }
 
             // find out what other actors are around us
-            var env:ArrayList[Pair[Int,Int]] = this.scene.actorQuery(this.pos(3*i), this.pos(3*i+1), this.pos(3*i+2), rand.nextInt(2*maxValue) as Double);
+            var env:ArrayList[Pair[Int,Int]] = this.scene.actorQuery(this.pos(3*i), this.pos(3*i+1), this.pos(3*i+2), 2*maxValue*rand.nextDouble());
 
             // if there are no actors around us or we are at the hive try to spread out
             if (env.isEmpty() || ((this.pos(3*i) == 0.0) && (this.pos(3*i+1) == 0.0) && (this.pos(3*i+2) == 0.0))) {
-                this.pos(3*i) += rand.nextInt(2*maxValue)-maxValue as Double;
-                this.pos(3*i+1) += rand.nextInt(2*maxValue)-maxValue as Double;
-                this.pos(3*i+2) += rand.nextInt(2*maxValue)-maxValue as Double;                  
+                this.pos(3*i) += (2*maxValue*rand.nextDouble())-maxValue;
+                this.pos(3*i+1) += (2*maxValue*rand.nextDouble())-maxValue;
+                this.pos(3*i+2) += (2*maxValue*rand.nextDouble())-maxValue;
             } else { 
                 // find the index of firefly group
                 var fireflygroup:Int = -1;
@@ -90,21 +90,21 @@ public class FireflyGroup extends ActorGroup {
                     // find a firefly with a current intensity that is bighter than ours and go near it.
                     var a:Int = this.envFind(fireflygroup, env, i);
                     if (a != -1) {                        
-                            this.pos(3*i) = this.pos(3*a) + 2;
-                            this.pos(3*i+1) = this.pos(3*a+1) + 2;
-                            this.pos(3*i+2) = this.pos(3*a+2) + 2;
+                        this.pos(3*i) = this.pos(3*a) + (rand.nextDouble()-1);
+                        this.pos(3*i+1) = this.pos(3*a+1) + (rand.nextDouble()-1);
+                        this.pos(3*i+2) = this.pos(3*a+2) + (rand.nextDouble()-1);
                     }
                     // otherwise just go somewhere else
                     else {
-                        this.pos(3*i) += rand.nextInt(2*maxValue)-maxValue as Double;
-                        this.pos(3*i+1) += rand.nextInt(2*maxValue)-maxValue as Double;
-                        this.pos(3*i+2) += rand.nextInt(2*maxValue)-maxValue as Double;                        
+                        this.pos(3*i) += (2*maxValue*rand.nextDouble())-maxValue;
+                        this.pos(3*i+1) += (2*maxValue*rand.nextDouble())-maxValue;
+                        this.pos(3*i+2) += (2*maxValue*rand.nextDouble())-maxValue;
                     }                    
                 } else {
                     // if we couldn't find the firefly group for some reason, just go somewhere.
-                        this.pos(3*i) += rand.nextInt(2*maxValue)-maxValue as Double;
-                        this.pos(3*i+1) += rand.nextInt(2*maxValue)-maxValue as Double;
-                        this.pos(3*i+2) += rand.nextInt(2*maxValue)-maxValue as Double;
+                        this.pos(3*i) += (2*maxValue*rand.nextDouble())-maxValue;
+                        this.pos(3*i+1) += (2*maxValue*rand.nextDouble())-maxValue;
+                        this.pos(3*i+2) += (2*maxValue*rand.nextDouble())-maxValue;
                 }        
             }
         }
