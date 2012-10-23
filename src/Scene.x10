@@ -16,9 +16,10 @@ public class Scene {
         this.VF_loadScene000(); //keeping our test cases separate and clean.
     }
     
+    // TODO: replace the need for these functions with scene files.
     def VF_loadScene000():void {
         this.start_frame = 1;
-        this.end_frame = 140;
+        this.end_frame = 50;
         
         // want food, home trail phero, and food trail phero affectors.
         this.affectorGroups = new Array[EnvAffectorGroup](3);
@@ -44,6 +45,19 @@ public class Scene {
         this.actorGroups(1) = new AntGroup(500, this);
 
     }
+
+    def VF_loadScene002():void {
+        this.start_frame = 1;
+        this.end_frame = 1000;
+
+        val p = new Array[Double](3, (p:Int) => 0.0);
+        val b = new Box(10.0, 10.0, 10.0, p);
+     
+        this.affectorGroups = new Array[EnvAffectorGroup](1);
+        this.affectorGroups(0) = new FireGroup(10);
+        this.actorGroups = new Array[ActorGroup](1);
+        this.actorGroups(0) = new FireflyGroup(100, b, this);
+    }
         
     def stepScene():void {
         for (var ag:int = 0; ag < actorGroups.size; ag++) {
@@ -57,7 +71,27 @@ public class Scene {
         this.current_frame++;
     }
 
-    //TODO: maybe set up an acceleration structure so we prune affectors that are too far away to be checked (spatial hashmap, 3d grid).
+    def actorQuery(x:double, y:double, z:double, radius:double) : ArrayList[Pair[int, int]] {
+        var result:ArrayList[Pair[int,int]] = new ArrayList[Pair[int,int]]();
+        
+        for (var group:int = 0; group < this.actorGroups.size; group++) {
+            for (var actor:int = 0; actor < this.actorGroups(group).size; actor++) {
+                if (distToActor(x,y,z,group,actor) < radius) {
+                    result.add(new Pair(group, actor));
+                }
+            }
+        }        
+        return result;
+    }
+
+    def distToActor(x:double, y:double, z:double, group:int, actor:int) : double {
+        return Math.sqrt(Math.pow((x-this.actorGroups(group).pos(3*actor)), 2)
+                         + Math.pow((y-this.actorGroups(group).pos(3*actor + 1)), 2)
+                         + Math.pow((z-this.actorGroups(group).pos(3*actor + 2)), 2));
+    }    
+
+
+    //TODO: set up an acceleration structure so we prune affectors that are too far away to be checked (spatial hashmap, 3d grid).
     // returns pairs of integers that represent which group an affector is in, and its index within that group.
     // this pair of numbers can be used to get the affector position, or any other attribute from the scene.
     // e.g. for position: scene.affectorGroups(group).pos(3*aff) gets the x position of affector aff in affector group, group.
@@ -75,7 +109,7 @@ public class Scene {
         return result;
     }
     
-    private def distToAffector(x:double, y:double, z:double, group:int, aff:int) : double {
+    def distToAffector(x:double, y:double, z:double, group:int, aff:int) : double {
         return Math.sqrt(Math.pow((x-this.affectorGroups(group).pos(3*aff)), 2)
                 			 + Math.pow((y-this.affectorGroups(group).pos(3*aff + 1)), 2)
                 			 + Math.pow((z-this.affectorGroups(group).pos(3*aff + 2)), 2));

@@ -31,7 +31,7 @@ for line in sim_data:
     else:
         tokens = line.split("; ")
         identifier = "ACTOR_" + tokens[1].split("=")[1] + "_" + tokens[2].split("=")[1]
-        print(identifier)
+        #print(identifier)
         pos = ast.literal_eval(tokens[3].split("=")[1])
 
         ob = bpy.data.objects[identifier]

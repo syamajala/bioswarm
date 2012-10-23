@@ -7,7 +7,7 @@ public abstract class ActorGroup {
     //var digestion_rate:Array[Double](1);
     var on_affector:Array[Boolean](1);
     var scene:Scene;
-    
+    var acttype:Int;    
     static val rand = new Random(System.nanoTime());
     static val maxValue = 10;
     public abstract def stepActors():void;
