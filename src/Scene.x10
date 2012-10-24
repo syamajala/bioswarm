@@ -13,7 +13,7 @@ public class Scene {
         
     def loadScene():void {
         // initialize the scene with actors, environment props, food, etc. here.
-        this.VF_loadScene000(); //keeping our test cases separate and clean.
+        this.VF_loadScene002(); //keeping our test cases separate and clean.
     }
     
     // TODO: replace the need for these functions with scene files.
@@ -63,20 +63,23 @@ public class Scene {
         for (var ag:int = 0; ag < actorGroups.size; ag++) {
             actorGroups(ag).stepActors();
         }
-        
-        for (var pg:int = 0; pg < this.affectorGroups.size; pg++) {
-            this.affectorGroups(pg).stepDynamicAttributes();
+
+        if (this.affectorGroups.size != 0) {
+            for (var pg:int = 0; pg < this.affectorGroups.size; pg++) {
+                this.affectorGroups(pg).stepDynamicAttributes();
+            }
         }
-        
         this.current_frame++;
     }
 
     def actorQuery(x:double, y:double, z:double, radius:double) : ArrayList[Pair[int, int]] {
-        var result:ArrayList[Pair[int,int]] = new ArrayList[Pair[int,int]]();
-        
+        var result:ArrayList[Pair[int,int]] = new ArrayList[Pair[int,int]]();        
         for (var group:int = 0; group < this.actorGroups.size; group++) {
             for (var actor:int = 0; actor < this.actorGroups(group).size; actor++) {
-                if (distToActor(x,y,z,group,actor) < radius) {
+                if ((distToActor(x,y,z,group,actor) < radius) &&
+                    ((x != this.actorGroups(group).pos(3*actor)) &&
+                     (y != this.actorGroups(group).pos(3*actor + 1)) &&
+                     (z != this.actorGroups(group).pos(3*actor + 2)))) {
                     result.add(new Pair(group, actor));
                 }
             }
