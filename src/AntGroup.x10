@@ -13,7 +13,7 @@ public class AntGroup extends ActorGroup {
     
     // max distance an ant will travel before deciding to go back to hive.
     val max_distance:double = 120.0;
-    var distance_travelled:double = 0.0;
+    var distance_travelled:Array[double];
     
     // how much food it will take in a bite.
     val chomp_size = 2.0;
@@ -28,7 +28,7 @@ public class AntGroup extends ActorGroup {
     // tells us how far away does an environment affector have to be to be sensed by ant.
     var search_radius:double = 25.0;
     // tells us which way ant is moving.
-    var dir:Array[double];
+    var dir:Array[double]; 
     
     // every ant knows the hive location at the origin.
     val hive_pos = [0.0, 0.0, 0.0];
@@ -42,6 +42,7 @@ public class AntGroup extends ActorGroup {
         this.located_food = new Array[boolean](size, (p:Int) => false);
         this.returning = new Array[boolean](size, (p:Int) => true);
         this.target_pos = new Array[double](3*size, (p:int) => 0.0);
+        this.distance_travelled = new Array[double](this.size, (p:int) => 0.0);
         
         this.scene = scene;
         
@@ -58,7 +59,8 @@ public class AntGroup extends ActorGroup {
         this.located_food = new Array[boolean](size, (p:Int) => false);
         this.returning = new Array[boolean](size, (p:Int) => true);
         this.target_pos = new Array[double](3*size, (p:int) => 0.0);
-
+        this.distance_travelled = new Array[double](this.size, (p:int) => 0.0);
+        
         this.scene = scene;
         
         this.initEnvAffectorIds();
@@ -119,7 +121,7 @@ public class AntGroup extends ActorGroup {
 	                    target_pos(3*i+2) = 0.0;
                     }
                     
-                    this.located_food(i) = true;
+//                    this.located_food(i) = true;
                 } // else if (env(p).first == EnvAffectorType.antHomeTrailPheromone) {
                 //     
                 // }
@@ -179,7 +181,7 @@ public class AntGroup extends ActorGroup {
                 
                 returning(i) = false;
                 located_food(i) = false;
-                distance_travelled = 0.0;
+                distance_travelled(i) = 0.0;
                 //Console.OUT.println(dir);
                 
             } else if (returning(i)) { //just returning, nothing found but max dist was reached.
@@ -205,8 +207,8 @@ public class AntGroup extends ActorGroup {
                 this.pos(3*i+1) += dir(3*i+1);
                 this.pos(3*i+2) += dir(3*i+2);
                 
-                distance_travelled += Math.sqrt( Math.pow(dir(3*i), 2) + Math.pow(dir(3*i+1), 2) + Math.pow(dir(3*i+2), 2) );
-                if (distance_travelled > max_distance) { //we have travelled too far without finding anything, set flag to return to hive.
+                distance_travelled(i) += Math.sqrt( Math.pow(dir(3*i), 2) + Math.pow(dir(3*i+1), 2) + Math.pow(dir(3*i+2), 2) );
+                if (distance_travelled(i) > max_distance) { //we have travelled too far without finding anything, set flag to return to hive.
                     returning(i) = true;
                 }
             }

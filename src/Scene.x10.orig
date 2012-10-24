@@ -13,13 +13,12 @@ public class Scene {
         
     def loadScene():void {
         // initialize the scene with actors, environment props, food, etc. here.
-        this.VF_loadScene000(); //keeping our test cases separate and clean.
+        this.VF_loadScene002(); //keeping our test cases separate and clean.
     }
     
-    // TODO: replace the need for these functions with scene files.
     def VF_loadScene000():void {
         this.start_frame = 1;
-        this.end_frame = 200;
+        this.end_frame = 140;
         
         // want food, home trail phero, and food trail phero affectors.
         this.affectorGroups = new Array[EnvAffectorGroup](3);
@@ -45,6 +44,8 @@ public class Scene {
         this.actorGroups(1) = new AntGroup(500, this);
 
     }
+<<<<<<< HEAD
+=======
 
     def VF_loadScene002():void {
         this.start_frame = 1;
@@ -58,6 +59,7 @@ public class Scene {
         this.actorGroups = new Array[ActorGroup](1);
         this.actorGroups(0) = new FireflyGroup(100, b, this);
     }
+>>>>>>> 4b394482e90bceaf5b274fdaa87b09fd123a589a
         
     def stepScene():void {
         for (var ag:int = 0; ag < actorGroups.size; ag++) {
@@ -71,6 +73,9 @@ public class Scene {
         this.current_frame++;
     }
 
+<<<<<<< HEAD
+    //TODO: maybe set up an acceleration structure so we prune affectors that are too far away to be checked (spatial hashmap, 3d grid).
+=======
     def actorQuery(x:double, y:double, z:double, radius:double) : ArrayList[Pair[int, int]] {
         var result:ArrayList[Pair[int,int]] = new ArrayList[Pair[int,int]]();
         
@@ -92,6 +97,7 @@ public class Scene {
 
 
     //TODO: set up an acceleration structure so we prune affectors that are too far away to be checked (spatial hashmap, 3d grid).
+>>>>>>> 4b394482e90bceaf5b274fdaa87b09fd123a589a
     // returns pairs of integers that represent which group an affector is in, and its index within that group.
     // this pair of numbers can be used to get the affector position, or any other attribute from the scene.
     // e.g. for position: scene.affectorGroups(group).pos(3*aff) gets the x position of affector aff in affector group, group.
