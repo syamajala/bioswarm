@@ -53,7 +53,6 @@ public class AntGroup extends ActorGroup {
     def this(n:Int, pos:Array[Double], scene:Scene) {
         this.size = n;
         this.pos = new Array[Double](3*size, (p:Int) => pos(p));
-        this.health = new Array[Double](size, (p:Int) => 100.0);
         this.dir = new Array[double](3*size, (p:int) => 0.0);
         this.health = new Array[double](size, (p:Int) => 100.0);
         this.located_food = new Array[boolean](size, (p:Int) => false);
@@ -164,7 +163,7 @@ public class AntGroup extends ActorGroup {
                 
                 if (distToTarget(i) < this.step_distance) { //reached food, eat some and set return flag.
                     val food:FoodGroup = this.scene.affectorGroups(this.food_affector_group_id) as FoodGroup;
-                    if (food.available(food_target_id)) {
+                    if (food.available(food_target_id, this.chomp_size)) {
                         Console.OUT.println("decrementing food");
                     	food.quantity(food_target_id) -= this.chomp_size;
                     	Console.OUT.println(food.quantity(food_target_id));

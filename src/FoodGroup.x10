@@ -47,8 +47,8 @@ public class FoodGroup extends EnvAffectorGroup {
         this.group_type = EnvAffectorType.Food;
     }
 
-    def available(i:int):Boolean {
-        if (quantity(i) > 0) 
+    def available(i:int, chomp_size:double):Boolean {
+        if (quantity(i) > chomp_size) 
             return true;
         else
             return false;

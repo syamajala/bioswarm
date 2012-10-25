@@ -13,7 +13,7 @@ public class Scene {
         
     def loadScene():void {
         // initialize the scene with actors, environment props, food, etc. here.
-        this.VF_loadScene000(); //keeping our test cases separate and clean.
+        this.VF_loadScene001(); //keeping our test cases separate and clean.
     }
     
     // TODO: replace the need for these functions with scene files.
@@ -33,17 +33,20 @@ public class Scene {
     
     def VF_loadScene001():void {
         this.start_frame = 1;
-        this.end_frame = 50;
+        this.end_frame = 1000;
 
         this.affectorGroups = new Array[EnvAffectorGroup](2);
-        this.affectorGroups(0) = new FireGroup(100);
-        this.affectorGroups(1) = new FoodGroup(100);
-        
+        this.affectorGroups(0) = new HiveEntranceGroup(1, [0.0 as double,0.0 as double,0.0 as double]);
+        var pos:Array[Double] =  [-75.0, -90.0, 0.0];
+        this.affectorGroups(1) = new FoodGroup(1, pos);
+                
         this.actorGroups = new Array[ActorGroup](2);
-        
+
+        val p = new Array[Double](3, (p:Int) => 10.0);
+        val b = new Box(50.0, 50.0, 50.0, p);
+
         this.actorGroups(0) = new FireflyGroup(500, this);
         this.actorGroups(1) = new AntGroup(500, this);
-
     }
 
     def VF_loadScene002():void {
@@ -95,12 +98,12 @@ public class Scene {
 
 
     //TODO: set up an acceleration structure so we prune affectors that are too far away to be checked (spatial hashmap, 3d grid).
-    // returns pairs of integers that represent which group an affector is in, and its index within that group.
+    // returns pairs of integers that represent an affector group's id, and its index within that group.
     // this pair of numbers can be used to get the affector position, or any other attribute from the scene.
     // e.g. for position: scene.affectorGroups(group).pos(3*aff) gets the x position of affector aff in affector group, group.
     def envAffectorQuery(x:Double, y:Double, z:Double, radius:Double):ArrayList[Pair[Int, Int]] {
         var result:ArrayList[Pair[Int,Int]] = new ArrayList[Pair[Int, Int]]();
-        
+
         for (var group:Int = 0; group < this.affectorGroups.size; group++) {
             for (var aff:Int = 0; aff < this.affectorGroups(group).size; aff++) {
                 if (distToAffector(x, y, z, group, aff) < radius) {

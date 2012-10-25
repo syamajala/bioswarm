@@ -1,0 +1,17 @@
+Bioswarm simulator. 
+
+We simulate ants and fireflies. Ants try to seek out food in a scene
+and bring it back to their hive. Fireflies roam about flashing and
+trying to find the closest neighbor with a brighter flash than them. 
+
+The test scene simulates 500 ants and 500 fireflies for 1000 frames
+with 1 food group for ants. It is run simply by running make and 
+./BioSwarm. In our test the scene took 445.139943657000003 seconds
+(approximately 7.41 minutes) to render. The output file output.bswarm 
+can then be visualized in Blender using the script view_bswarm.py in viz. 
+Simply open the script in Blender's texteditor, modify the sim_data 
+variable to contain the correct path of the output.bswarm file and click 
+run script. The scene can then be viewed in Blender's 3d view. 
+
+Functionality tests can be built using make test, and running the resulting
+test binary. 
