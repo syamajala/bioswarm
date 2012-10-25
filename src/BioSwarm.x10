@@ -17,7 +17,7 @@ public class BioSwarm {
         
         var start_frame:Int = s.start_frame;
         var end_frame:Int = s.end_frame;
-        val start = Timer.nanoTime();        
+        val start = Timer.nanoTime();
         for (frame in start_frame..end_frame) {
             Console.OUT.println("FRAME " + frame);
             

@@ -13,22 +13,22 @@ public class Scene {
         
     def loadScene():void {
         // initialize the scene with actors, environment props, food, etc. here.
-        this.VF_loadScene002(); //keeping our test cases separate and clean.
+        this.VF_loadScene000(); //keeping our test cases separate and clean.
     }
     
     // TODO: replace the need for these functions with scene files.
     def VF_loadScene000():void {
         this.start_frame = 1;
-        this.end_frame = 200;
+        this.end_frame = 1000;
         
         // want food, home trail phero, and food trail phero affectors.
-        this.affectorGroups = new Array[EnvAffectorGroup](3);
+        this.affectorGroups = new Array[EnvAffectorGroup](2);
         this.affectorGroups(0) = new FoodGroup(1, [50.0, 50.0, 0.0]);
         this.affectorGroups(1) = new HiveEntranceGroup(1, [0.0 as double,0.0 as double,0.0 as double]);
-        this.affectorGroups(2) = new PheromoneGroup(EnvAffectorType.antFoodTrailPheromone, 2.0);
+        // this.affectorGroups(2) = new PheromoneGroup(EnvAffectorType.antFoodTrailPheromone, 2.0);
         
         this.actorGroups = new Array[ActorGroup](1);
-        this.actorGroups(0) = new AntGroup(500, this);
+        this.actorGroups(0) = new AntGroup(100, this);
     }
     
     def VF_loadScene001():void {

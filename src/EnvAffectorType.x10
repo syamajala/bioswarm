@@ -3,4 +3,4 @@ public class EnvAffectorType {
     static val Food:int = 1;
     static val Fire:int = 2;
     static val antHiveEntrance:int = 3;
-}        
+}

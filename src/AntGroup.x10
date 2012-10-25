@@ -4,9 +4,9 @@ import x10.util.Pair;
 //ants move only within a 2d plane (ground), so we tend to ignore the third axis here.
 public class AntGroup extends ActorGroup {
     //these ids tell us where to access certain environment affector groups.
-    var ant_home_trail_pheromone_id:int;
-    var ant_food_trail_pheromone_id:int;
-    var food_affector_id:int;
+    // var ant_home_trail_pheromone_id:int;
+    // var ant_food_trail_pheromone_id:int;
+    var food_affector_group_id:int;
     
     // how far, maximum, an ant can move in one time-step.
     val step_distance:double = 3.0;
@@ -18,7 +18,7 @@ public class AntGroup extends ActorGroup {
     // how much food it will take in a bite.
     val chomp_size = 2.0;
     
-    val phero_strength = 10.0;
+    //val phero_strength = 10.0;
     
     // food calculation variables.
     var located_food:Array[boolean];
@@ -72,12 +72,14 @@ public class AntGroup extends ActorGroup {
         for (var i:Int = 0; i < scene.affectorGroups.size; i++) {
             //Console.OUT.println("group type: " + scene.affectorGroups(i).group_type);
             //Console.OUT.println("antFoodTrailPheromoneType: " + EnvAffectorType.antFoodTrailPheromone);
-            if (scene.affectorGroups(i).group_type == EnvAffectorType.antFoodTrailPheromone) {
-                this.ant_food_trail_pheromone_id = i;
-                //Console.OUT.println("food trail phero id: " + this.ant_food_trail_pheromone_id + ", " + i);
+            // if (scene.affectorGroups(i).group_type == EnvAffectorType.antFoodTrailPheromone) {
+            //     this.ant_food_trail_pheromone_id = i;
+            //     //Console.OUT.println("food trail phero id: " + this.ant_food_trail_pheromone_id + ", " + i);
+            // }
+            // else
+            if (scene.affectorGroups(i).group_type == EnvAffectorType.Food) {
+                this.food_affector_group_id = i;
             }
-            else if (scene.affectorGroups(i).group_type == EnvAffectorType.Food)
-                this.food_affector_id = i;
         }
     }
 
@@ -100,73 +102,42 @@ public class AntGroup extends ActorGroup {
             }
             
             //check for target environment affectors and set appropriate target for the actor.
-            var min_strength:double = Double.POSITIVE_INFINITY;
+            //var min_strength:double = Double.POSITIVE_INFINITY;
+            var food_target_id : int = -1;
             for (var p:int = 0; p < env.size(); p++) {
                 // food is first priority affector
                 if (env(p).first == EnvAffectorType.Food) {
-                    this.located_food(i) = true;
-                    target_pos(3*i) = this.scene.affectorGroups(this.food_affector_id).pos(3*env(p).second);
-                    target_pos(3*i+1) = this.scene.affectorGroups(this.food_affector_id).pos(3*env(p).second+1);
-                    target_pos(3*i+2) = 0.0;
-                    
-                } else if (env(p).first == EnvAffectorType.antFoodTrailPheromone) { //go down the decreasing gradient of pheromone strength.
-                    val food_trail_phero:PheromoneGroup = this.scene.affectorGroups(this.ant_food_trail_pheromone_id) as PheromoneGroup;
-                    val test_min:double = food_trail_phero.strength(env(p).second);
-                    
-                    if ( test_min < min_strength && test_min > 1e-6) {
-                        min_strength = test_min;
-                        
-	                    target_pos(3*i) = this.scene.affectorGroups(this.ant_food_trail_pheromone_id).pos(3*env(p).second);
-	                    target_pos(3*i) = this.scene.affectorGroups(this.ant_food_trail_pheromone_id).pos(3*env(p).second+1);
+                    val fg : FoodGroup = this.scene.affectorGroups(this.food_affector_group_id) as FoodGroup;
+                    if (fg.quantity(3*env(p).second) > 0.0) {
+	                    this.located_food(i) = true;
+	                    target_pos(3*i) = this.scene.affectorGroups(this.food_affector_group_id).pos(3*env(p).second);
+	                    target_pos(3*i+1) = this.scene.affectorGroups(this.food_affector_group_id).pos(3*env(p).second+1);
 	                    target_pos(3*i+2) = 0.0;
+	                    food_target_id = env(p).second;
                     }
                     
-//                    this.located_food(i) = true;
-                } // else if (env(p).first == EnvAffectorType.antHomeTrailPheromone) {
+                }
+//                 } else if (env(p).first == EnvAffectorType.antFoodTrailPheromone) { //go down the decreasing gradient of pheromone strength.
+//                     val food_trail_phero:PheromoneGroup = this.scene.affectorGroups(this.ant_food_trail_pheromone_id) as PheromoneGroup;
+//                     val test_min:double = food_trail_phero.strength(env(p).second);
+//                     
+//                     if ( test_min < min_strength && test_min > 1e-6) {
+//                         min_strength = test_min;
+//                         
+// 	                    target_pos(3*i) = this.scene.affectorGroups(this.ant_food_trail_pheromone_id).pos(3*env(p).second);
+// 	                    target_pos(3*i) = this.scene.affectorGroups(this.ant_food_trail_pheromone_id).pos(3*env(p).second+1);
+// 	                    target_pos(3*i+2) = 0.0;
+//                     }
+//                     
+// //                    this.located_food(i) = true;
+//                 } // else if (env(p).first == EnvAffectorType.antHomeTrailPheromone) {
                 //     
                 // }
             }
             
             //move out in a random direction, with some variance.
             
-            if (located_food(i) && returning(i)) { //race home and drop food found pheros along the way
-                this.target_pos(3*i) = this.hive_pos(0);
-                this.target_pos(3*i+1) = this.hive_pos(1);
-                this.target_pos(3*i+2) = this.hive_pos(2);
-                
-                val dir_to_home:Array[double] = stepVectorToTarget(i);
-                
-                //drop the phero into environment.
-                val food_trail_phero:PheromoneGroup = this.scene.affectorGroups(this.ant_food_trail_pheromone_id) as PheromoneGroup;
-                
-                food_trail_phero.pos.add(this.pos(3*i));
-                food_trail_phero.pos.add(this.pos(3*i+1));
-                food_trail_phero.pos.add(this.pos(3*i+2));
-                food_trail_phero.strength.add(this.phero_strength);
-                food_trail_phero.size++;
-                
-                this.pos(3*i) += dir_to_home(0);
-                this.pos(3*i+1) += dir_to_home(1);
-                this.pos(3*i+2) += dir_to_home(2);
-                
-            }
-            else if (located_food(i) && !returning(i)) { //haven't gotten food yet, but found it.
-                // move towards food if not far enough to get a bite. (can take bite within step_distance of food position).
-                val dir_to_food:Array[double] = stepVectorToTarget(i);
-                
-                this.pos(3*i) += dir_to_food(0);
-                this.pos(3*i+1) += dir_to_food(1);
-                this.pos(3*i+2) += dir_to_food(2);
-                
-                if (distToTarget(i) < this.step_distance) { //reached food, eat some and set return flag.
-                    val food:FoodGroup = this.scene.affectorGroups(this.food_affector_id) as FoodGroup;
-                    if (food.available(0)) {
-                    	food.quantity(0) -= this.chomp_size; //only using one food source in scene for now.
-                    }
-                    returning(i) = true;
-                }
-                
-            } else if (returning(i) && at_hive) {
+            if (returning(i) && at_hive) {
                 //Console.OUT.println("ANT IS AT THE HIVE!");
                 val range_mod:double = this.step_distance/2;
                 
@@ -183,7 +154,43 @@ public class AntGroup extends ActorGroup {
                 located_food(i) = false;
                 distance_travelled(i) = 0.0;
                 //Console.OUT.println(dir);
+            } else if (located_food(i) && !returning(i)) { //haven't gotten food yet, but found it.
+                // move towards food if not far enough to get a bite. (can take bite within step_distance of food position).
+                val dir_to_food:Array[double] = stepVectorToTarget(i);
                 
+                this.pos(3*i) += dir_to_food(0);
+                this.pos(3*i+1) += dir_to_food(1);
+                this.pos(3*i+2) += dir_to_food(2);
+                
+                if (distToTarget(i) < this.step_distance) { //reached food, eat some and set return flag.
+                    val food:FoodGroup = this.scene.affectorGroups(this.food_affector_group_id) as FoodGroup;
+                    if (food.available(food_target_id)) {
+                        Console.OUT.println("decrementing food");
+                    	food.quantity(food_target_id) -= this.chomp_size;
+                    	Console.OUT.println(food.quantity(food_target_id));
+                    }
+                    returning(i) = true;
+                }
+                
+            } else if (located_food(i) && returning(i)) { //race home and drop food found pheros along the way
+                this.target_pos(3*i) = this.hive_pos(0);
+                this.target_pos(3*i+1) = this.hive_pos(1);
+                this.target_pos(3*i+2) = this.hive_pos(2);
+                
+                val dir_to_home:Array[double] = stepVectorToTarget(i);
+                
+                //drop the phero into environment.
+                // val food_trail_phero:PheromoneGroup = this.scene.affectorGroups(this.ant_food_trail_pheromone_id) as PheromoneGroup;
+                // 
+                // food_trail_phero.pos.add(this.pos(3*i));
+                // food_trail_phero.pos.add(this.pos(3*i+1));
+                // food_trail_phero.pos.add(this.pos(3*i+2));
+                // food_trail_phero.strength.add(this.phero_strength);
+                // food_trail_phero.size++;
+                
+                this.pos(3*i) += dir_to_home(0);
+                this.pos(3*i+1) += dir_to_home(1);
+                this.pos(3*i+2) += dir_to_home(2);
             } else if (returning(i)) { //just returning, nothing found but max dist was reached.
                 this.target_pos(3*i) = this.hive_pos(0);
                 this.target_pos(3*i+1) = this.hive_pos(1);
