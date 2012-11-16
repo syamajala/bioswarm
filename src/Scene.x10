@@ -11,9 +11,25 @@ public class Scene {
     var actorGroups:Array[ActorGroup];
     var affectorGroups:Array[EnvAffectorGroup];
         
-    def loadScene():void {
+    def loadScene(n:Int):void {
         // initialize the scene with actors, environment props, food, etc. here.
-        this.VF_loadScene001(); //keeping our test cases separate and clean.
+
+        switch (n) {
+        case 0:
+            Console.OUT.println("Loading scene 0");
+            this.VF_loadScene000();
+            break;
+        case 1:
+            Console.OUT.println("Loading scene 1");
+            this.VF_loadScene001();
+            break;
+        case 2:            
+            Console.OUT.println("Loading scene 2");
+            this.VF_loadScene002(); //keeping our test cases separate and clean.
+            break;
+        default:
+            throw new Exception("Undefined scene file");     
+        }
     }
     
     // TODO: replace the need for these functions with scene files.
@@ -45,7 +61,7 @@ public class Scene {
         val p = new Array[Double](3, (p:Int) => 10.0);
         val b = new Box(50.0, 50.0, 50.0, p);
 
-        this.actorGroups(0) = new FireflyGroup(500, this);
+        this.actorGroups(0) = new FireflyGroup(500, 0, this);
         this.actorGroups(1) = new AntGroup(500, this);
     }
 
@@ -59,14 +75,32 @@ public class Scene {
         this.affectorGroups = new Array[EnvAffectorGroup](1);
         this.affectorGroups(0) = new FireGroup(10);
         this.actorGroups = new Array[ActorGroup](1);
-        this.actorGroups(0) = new FireflyGroup(100, b, this);
+        this.actorGroups(0) = new FireflyGroup(100, b, 0, this);
+    }
+
+    def serialstepScene():void {
+        for (var ag:int = 0; ag < this.actorGroups.size; ag++) {        
+               this.actorGroups(ag).serialstepActors();
+        }
+        
+        if (this.affectorGroups.size != 0) {
+            for (var pg:int = 0; pg < this.affectorGroups.size; pg++) {
+                this.affectorGroups(pg).stepDynamicAttributes();
+            }
+        }
+        this.current_frame++;
     }
         
-    def stepScene():void {
-        for (var ag:int = 0; ag < actorGroups.size; ag++) {
-            actorGroups(ag).stepActors();
+    def parallelstepScene():void {
+        if (this.actorGroups.size > 1) {
+            finish for (var ag:int = 0; ag < this.actorGroups.size; ag++) {
+                val g = ag;
+                async this.actorGroups(g).parallelstepActors();
+            }
+        } else {
+            this.actorGroups(0).parallelstepActors();
         }
-
+        
         if (this.affectorGroups.size != 0) {
             for (var pg:int = 0; pg < this.affectorGroups.size; pg++) {
                 this.affectorGroups(pg).stepDynamicAttributes();

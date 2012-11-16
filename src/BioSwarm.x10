@@ -6,32 +6,53 @@ public class BioSwarm {
 
     public static def main(argv:Array[String]{self.rank==1}) {
         Console.OUT.println("BIOSWARM SIMULATOR");
-        
-        val output_file:File = new File("output.bswarm");
-        val p:Printer = output_file.printer();
+        if (argv.size != 2) {
+            Console.OUT.println("Usage: BioSwarm <scene-number>");
+            return;
+        }
+        val soutput_file = new File("serial_output.bswarm");
+        val sp = soutput_file.printer();
         
         Console.OUT.println("Initializing scene...");
 
+        val scene = Int.parseInt(argv(0));
         var s:Scene = new Scene();
-        s.loadScene();
+        s.loadScene(scene);
         
         var start_frame:Int = s.start_frame;
         var end_frame:Int = s.end_frame;
-        val start = Timer.nanoTime();
+        
+
+        Console.OUT.println("Serial trial");
+        val sstart = Timer.nanoTime();
         for (frame in start_frame..end_frame) {
             Console.OUT.println("FRAME " + frame);
             
             //progress the simulation one timestep.
-            s.stepScene();
+            s.serialstepScene();
             
             //save out scene representation at current frame to file.
+            s.outputSimState(sp);
+
+        val sstop = Timer.nanoTime();
+        val serialTime = (sstop-sstart)*Math.pow(10, -9);
+        sp.flush();
+        }
+        val output_file = new File("output.bswarm");
+        val p = output_file.printer();
+        Console.OUT.println("Parallel trial");
+        val pstart = Timer.nanoTime();
+        for (frame in start_frame..end_frame) {
+            Console.OUT.println("FRAME " + frame);
+            s.parallelstepScene();
             s.outputSimState(p);
         }
-        val stop = Timer.nanoTime();
-        p.flush();
-        
+        val pstop = Timer.nanoTime();
+        val parallelTime = (pstop-pstart)*Math.pow(10, -9);
         Console.OUT.println("Simulation Complete.");
-        Console.OUT.println("Time: " + (stop-start)*Math.pow(10, -9));
+        Console.OUT.println("Serial time: " + serialTime);
+        Console.OUT.println("Parallel time: " + parallelTime);
+        Console.OUT.println("Speed up: " + serialTime/parallelTime);
     }
     
 }

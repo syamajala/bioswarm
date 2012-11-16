@@ -82,7 +82,11 @@ public class AntGroup extends ActorGroup {
         }
     }
 
-    public def stepActors():void {
+    public def parallelstepActors():void {
+        this.serialstepActors();
+    }
+
+    public def serialstepActors():void {
         for (var i:Int = 0; i < this.size; i++) {
 
             //don't step it if it's dead.
