@@ -6,7 +6,7 @@ public class BioSwarm {
 
     public static def main(argv:Array[String]{self.rank==1}) {
         Console.OUT.println("BIOSWARM SIMULATOR");
-        if (argv.size != 2) {
+        if (argv.size != 1) {
             Console.OUT.println("Usage: BioSwarm <scene-number>");
             return;
         }
@@ -33,11 +33,11 @@ public class BioSwarm {
             
             //save out scene representation at current frame to file.
             s.outputSimState(sp);
-
+        }
         val sstop = Timer.nanoTime();
         val serialTime = (sstop-sstart)*Math.pow(10, -9);
         sp.flush();
-        }
+        
         val output_file = new File("output.bswarm");
         val p = output_file.printer();
         Console.OUT.println("Parallel trial");

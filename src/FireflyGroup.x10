@@ -93,10 +93,11 @@ public class FireflyGroup extends ActorGroup {
     }
 
     public def parallelstepActors():void {
+        var actorNextPos:Array[Double] = new Array[Double](this.pos);
         finish for (var ii:Int = 0; ii < this.size; ii++) {
             val i = ii;
             if (!this.alive(i))
-                    continue;                
+                    continue;
             async {                               
             // keep track of how many steps its been since we've flashed
             // then reset our intensity, and become less bright as time goes on.
@@ -114,26 +115,27 @@ public class FireflyGroup extends ActorGroup {
 
                 // if there are no actors around us or we are at the hive try to spread out
                 if (env.isEmpty() || ((this.pos(3*i) == 0.0) && (this.pos(3*i+1) == 0.0) && (this.pos(3*i+2) == 0.0))) {
-                    this.pos(3*i) += (2*maxValue*rand.nextDouble())-maxValue;
-                    this.pos(3*i+1) += (2*maxValue*rand.nextDouble())-maxValue;
-                    this.pos(3*i+2) += (2*maxValue*rand.nextDouble())-maxValue;
+                    actorNextPos(3*i) += (2*maxValue*rand.nextDouble())-maxValue;
+                    actorNextPos(3*i+1) += (2*maxValue*rand.nextDouble())-maxValue;
+                    actorNextPos(3*i+2) += (2*maxValue*rand.nextDouble())-maxValue;
                 } else { 
                     // find a firefly with a current intensity that is bighter than ours and go near it.
                     var a:Int = this.envFind(this.fireflygroup, env, i);
                     if (a != -1) {
-                        this.pos(3*i) = this.pos(3*a) + (rand.nextDouble());
-                        this.pos(3*i+1) = this.pos(3*a+1) + (rand.nextDouble());
-                        this.pos(3*i+2) = this.pos(3*a+2) + (rand.nextDouble());
+                        actorNextPos(3*i) = this.pos(3*a) + (rand.nextDouble());
+                        actorNextPos(3*i+1) = this.pos(3*a+1) + (rand.nextDouble());
+                        actorNextPos(3*i+2) = this.pos(3*a+2) + (rand.nextDouble());
                     }
                     // otherwise just go somewhere else
                     else {
-                        this.pos(3*i) += (2*maxValue*rand.nextDouble())-maxValue;
-                        this.pos(3*i+1) += (2*maxValue*rand.nextDouble())-maxValue;
-                        this.pos(3*i+2) += (2*maxValue*rand.nextDouble())-maxValue;
-                    }                    
+                        actorNextPos(3*i) += (2*maxValue*rand.nextDouble())-maxValue;
+                        actorNextPos(3*i+1) += (2*maxValue*rand.nextDouble())-maxValue;
+                        actorNextPos(3*i+2) += (2*maxValue*rand.nextDouble())-maxValue;
+                    }       
                 }
             }
         }
+        this.pos = actorNextPos;
     }
 
     def envFind(i:Int, env:ArrayList[Pair[Int,Int]], c:Int):Int {
