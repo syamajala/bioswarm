@@ -22,7 +22,6 @@ public class BioSwarm {
         var start_frame:Int = s.start_frame;
         var end_frame:Int = s.end_frame;
         
-
         Console.OUT.println("Serial trial");
         val sstart = Timer.nanoTime();
         for (frame in start_frame..end_frame) {
@@ -40,15 +39,18 @@ public class BioSwarm {
         
         val output_file = new File("output.bswarm");
         val p = output_file.printer();
+        var s2:Scene = new Scene();
+        s2.loadScene(scene);
         Console.OUT.println("Parallel trial");
         val pstart = Timer.nanoTime();
         for (frame in start_frame..end_frame) {
             Console.OUT.println("FRAME " + frame);
-            s.parallelstepScene();
-            s.outputSimState(p);
+            s2.parallelstepScene();
+            s2.outputSimState(p);
         }
         val pstop = Timer.nanoTime();
         val parallelTime = (pstop-pstart)*Math.pow(10, -9);
+        p.flush();
         Console.OUT.println("Simulation Complete.");
         Console.OUT.println("Serial time: " + serialTime);
         Console.OUT.println("Parallel time: " + parallelTime);
