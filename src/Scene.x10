@@ -91,14 +91,14 @@ public class Scene {
         this.current_frame++;
     }
         
-    def parallelstepScene():void {
+    def parallelstepScene(num_threads:int):void {
         if (this.actorGroups.size > 1) {
             finish for (var ag:int = 0; ag < this.actorGroups.size; ag++) {
                 val g = ag;
-                async this.actorGroups(g).parallelstepActors();
+                async this.actorGroups(g).parallelstepActors(num_threads);
             }
         } else {
-            this.actorGroups(0).parallelstepActors();
+            this.actorGroups(0).parallelstepActors(num_threads);
         }
         
         if (this.affectorGroups.size != 0) {
