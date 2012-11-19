@@ -92,7 +92,8 @@ public class FireflyGroup extends ActorGroup {
         }
     }
 
-    public def parallelstepActors():void {
+    public def parallelstepActors(num_threads:int):void {
+        var actorNextPos:Array[Double] = new Array[Double](this.pos);
         finish for (var ii:Int = 0; ii < this.size; ii++) {
             val i = ii;
             if (!this.alive(i))

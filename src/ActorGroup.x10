@@ -11,7 +11,7 @@ public abstract class ActorGroup {
     static val rand = new Random(System.nanoTime());
     static val maxValue = 10;
     public abstract def serialstepActors():void;
-    public abstract def parallelstepActors():void;
+    public abstract def parallelstepActors(num_threads:int):void;
     def alive(i:Int):Boolean {
         if (this.health(i) < 1.0) { 
             return false;

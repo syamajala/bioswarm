@@ -6,8 +6,8 @@ public class BioSwarm {
 
     public static def main(argv:Array[String]{self.rank==1}) {
         Console.OUT.println("BIOSWARM SIMULATOR");
-        if (argv.size != 1) {
-            Console.OUT.println("Usage: BioSwarm <scene-number>");
+        if (argv.size != 2) {
+            Console.OUT.println("Usage: BioSwarm <scene-number> <num_asyncs>");
             return;
         }
         val soutput_file = new File("serial_output.bswarm");
@@ -16,6 +16,7 @@ public class BioSwarm {
         Console.OUT.println("Initializing scene...");
 
         val scene = Int.parseInt(argv(0));
+        val num_threads = Int.parseInt(argv(1));
         var s:Scene = new Scene();
         s.loadScene(scene);
         
@@ -25,7 +26,7 @@ public class BioSwarm {
         Console.OUT.println("Serial trial");
         val sstart = Timer.nanoTime();
         for (frame in start_frame..end_frame) {
-            Console.OUT.println("FRAME " + frame);
+            //Console.OUT.println("FRAME " + frame);
             
             //progress the simulation one timestep.
             s.serialstepScene();
@@ -44,8 +45,8 @@ public class BioSwarm {
         Console.OUT.println("Parallel trial");
         val pstart = Timer.nanoTime();
         for (frame in start_frame..end_frame) {
-            Console.OUT.println("FRAME " + frame);
-            s2.parallelstepScene();
+            //Console.OUT.println("FRAME " + frame);
+            s2.parallelstepScene(num_threads);
             s2.outputSimState(p);
         }
         val pstop = Timer.nanoTime();

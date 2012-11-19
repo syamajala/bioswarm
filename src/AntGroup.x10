@@ -26,7 +26,7 @@ public class AntGroup extends ActorGroup {
     var target_pos:Array[double];
     
     // tells us how far away does an environment affector have to be to be sensed by ant.
-    var search_radius:double = 25.0;
+    val search_radius:double = 25.0;
     // tells us which way ant is moving.
     var dir:Array[double]; 
     
@@ -82,8 +82,163 @@ public class AntGroup extends ActorGroup {
         }
     }
 
-    public def parallelstepActors():void {
-        this.serialstepActors();
+    public def parallelstepActors(num_threads:int):void {
+        // divide up range of actors by num_threads and launch one async per group.
+        val async_step = this.size / num_threads;
+        var end_bounds:ArrayList[int] = new ArrayList[int]();
+        
+        var eb:int = 0;
+        end_bounds.add(0);
+        while (eb < this.size) {
+            eb += async_step;
+        	if (eb > this.size) {
+        	    end_bounds.add(this.size);
+        	    break;
+        	} else {
+            	end_bounds.add(eb);
+        	}
+        }
+        
+        //Console.OUT.println("end_bounds: " + end_bounds);
+        
+        finish for (var ass:int = 1; ass < end_bounds.size(); ass++) {
+            val aass = ass;
+        	async for (var i:Int = end_bounds(aass-1); i < end_bounds(aass); i++) {
+	            //don't step it if it's dead.
+	            if (!this.alive(i))
+	                continue;
+	            
+	            var env:ArrayList[Pair[Int,Int]] = this.scene.envAffectorQuery(this.pos(3*i), this.pos(3*i+1), 0.0, this.search_radius);
+	            
+	            // are we at the hive?
+	            var at_hive:boolean = false;
+	            
+	            for (var p:int = 0; p < env.size(); p++) {
+	                if (env(p).first == EnvAffectorType.antHiveEntrance) {
+	                    at_hive = true;
+	                }
+	            }
+	            
+	            //check for target environment affectors and set appropriate target for the actor.
+	            //var min_strength:double = Double.POSITIVE_INFINITY;
+	            var food_target_id : int = -1;
+	            for (var p:int = 0; p < env.size(); p++) {
+	                // food is first priority affector
+	                if (env(p).first == EnvAffectorType.Food) {
+	                    val fg : FoodGroup = this.scene.affectorGroups(this.food_affector_group_id) as FoodGroup;
+	                    if (fg.quantity(3*env(p).second) > 0.0) {
+	                        this.located_food(i) = true;
+	                        target_pos(3*i) = this.scene.affectorGroups(this.food_affector_group_id).pos(3*env(p).second);
+	                        target_pos(3*i+1) = this.scene.affectorGroups(this.food_affector_group_id).pos(3*env(p).second+1);
+	                        target_pos(3*i+2) = 0.0;
+	                        food_target_id = env(p).second;
+	                    }
+	                    
+	                }
+	                //                 } else if (env(p).first == EnvAffectorType.antFoodTrailPheromone) { //go down the decreasing gradient of pheromone strength.
+	                //                     val food_trail_phero:PheromoneGroup = this.scene.affectorGroups(this.ant_food_trail_pheromone_id) as PheromoneGroup;
+	                //                     val test_min:double = food_trail_phero.strength(env(p).second);
+	                //                     
+	                //                     if ( test_min < min_strength && test_min > 1e-6) {
+	                //                         min_strength = test_min;
+	                //                         
+	                // 	                    target_pos(3*i) = this.scene.affectorGroups(this.ant_food_trail_pheromone_id).pos(3*env(p).second);
+	                // 	                    target_pos(3*i) = this.scene.affectorGroups(this.ant_food_trail_pheromone_id).pos(3*env(p).second+1);
+	                // 	                    target_pos(3*i+2) = 0.0;
+	                //                     }
+	                //                     
+	                // //                    this.located_food(i) = true;
+	                //                 } // else if (env(p).first == EnvAffectorType.antHomeTrailPheromone) {
+	                //     
+	                // }
+	            }
+	            
+	            //move out in a random direction, with some variance.
+	            
+	            if (returning(i) && at_hive) {
+	                //Console.OUT.println("ANT IS AT THE HIVE!");
+	                val range_mod:double = this.step_distance/2;
+	                
+	                //bestow a "main direction of travel" to this ant.
+	                dir(3*i) = rand.nextDouble()*this.step_distance - range_mod;
+	                dir(3*i+1) = rand.nextDouble()*this.step_distance - range_mod;
+	                dir(3*i+2) = 0.0;
+	                
+	                this.pos(3*i) += dir(3*i);
+	                this.pos(3*i+1) += dir(3*i+1);
+	                this.pos(3*i+2) += dir(3*i+2);
+	                
+	                returning(i) = false;
+	                located_food(i) = false;
+	                distance_travelled(i) = 0.0;
+	                //Console.OUT.println(dir);
+	            } else if (located_food(i) && !returning(i)) { //haven't gotten food yet, but found it.
+	                // move towards food if not far enough to get a bite. (can take bite within step_distance of food position).
+	                val dir_to_food:Array[double] = stepVectorToTarget(i);
+	                
+	                this.pos(3*i) += dir_to_food(0);
+	                this.pos(3*i+1) += dir_to_food(1);
+	                this.pos(3*i+2) += dir_to_food(2);
+	                
+	                if (distToTarget(i) < this.step_distance) { //reached food, eat some and set return flag.
+	                    val food:FoodGroup = this.scene.affectorGroups(this.food_affector_group_id) as FoodGroup;
+	                    if (food.available(food_target_id, this.chomp_size)) {
+	                        Console.OUT.println("decrementing food");
+	                        food.quantity(food_target_id) -= this.chomp_size;
+	                        Console.OUT.println(food.quantity(food_target_id));
+	                    }
+	                    returning(i) = true;
+	                }
+	                
+	            } else if (located_food(i) && returning(i)) { //race home and drop food found pheros along the way
+	                this.target_pos(3*i) = this.hive_pos(0);
+	                this.target_pos(3*i+1) = this.hive_pos(1);
+	                this.target_pos(3*i+2) = this.hive_pos(2);
+	                
+	                val dir_to_home:Array[double] = stepVectorToTarget(i);
+	                
+	                //drop the phero into environment.
+	                // val food_trail_phero:PheromoneGroup = this.scene.affectorGroups(this.ant_food_trail_pheromone_id) as PheromoneGroup;
+	                // 
+	                // food_trail_phero.pos.add(this.pos(3*i));
+	                // food_trail_phero.pos.add(this.pos(3*i+1));
+	                // food_trail_phero.pos.add(this.pos(3*i+2));
+	                // food_trail_phero.strength.add(this.phero_strength);
+	                // food_trail_phero.size++;
+	                
+	                this.pos(3*i) += dir_to_home(0);
+	                this.pos(3*i+1) += dir_to_home(1);
+	                this.pos(3*i+2) += dir_to_home(2);
+	            } else if (returning(i)) { //just returning, nothing found but max dist was reached.
+	                this.target_pos(3*i) = this.hive_pos(0);
+	                this.target_pos(3*i+1) = this.hive_pos(1);
+	                this.target_pos(3*i+2) = this.hive_pos(2);
+	                
+	                val dir_to_home:Array[double] = stepVectorToTarget(i);
+	                
+	                this.pos(3*i) += dir_to_home(0);
+	                this.pos(3*i+1) += dir_to_home(1);
+	                this.pos(3*i+2) += dir_to_home(2);
+	                
+	            } else { //perturb by small factor, but mainly stay along original direction of travel.
+	                val factor:double = 1/10.0;
+	                val factor_mod:double = (this.step_distance*factor)/2;
+	                dir(3*i) += rand.nextDouble()*this.step_distance*factor - factor_mod;
+	                dir(3*i+1) += rand.nextDouble()*this.step_distance*factor - factor_mod;
+	                dir(3*i+2) = 0.0;
+	                
+	                //Console.OUT.println(dir);
+	                this.pos(3*i) += dir(3*i);
+	                this.pos(3*i+1) += dir(3*i+1);
+	                this.pos(3*i+2) += dir(3*i+2);
+	                
+	                distance_travelled(i) += Math.sqrt( Math.pow(dir(3*i), 2) + Math.pow(dir(3*i+1), 2) + Math.pow(dir(3*i+2), 2) );
+	                if (distance_travelled(i) > max_distance) { //we have travelled too far without finding anything, set flag to return to hive.
+	                    returning(i) = true;
+	                }
+	            }
+	        }
+        }
     }
 
     public def serialstepActors():void {

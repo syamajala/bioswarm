@@ -61,7 +61,7 @@ public class Scene {
         val p = new Array[Double](3, (p:Int) => 10.0);
         val b = new Box(50.0, 50.0, 50.0, p);
 
-        this.actorGroups(0) = new FireflyGroup(500, 0, this);
+        this.actorGroups(0) = new FireflyGroup(500, b, 0, this);
         this.actorGroups(1) = new AntGroup(500, this);
     }
 
@@ -91,14 +91,14 @@ public class Scene {
         this.current_frame++;
     }
         
-    def parallelstepScene():void {
+    def parallelstepScene(num_threads:int):void {
         if (this.actorGroups.size > 1) {
             finish for (var ag:int = 0; ag < this.actorGroups.size; ag++) {
                 val g = ag;
-                async this.actorGroups(g).parallelstepActors();
+                async this.actorGroups(g).parallelstepActors(num_threads);
             }
         } else {
-            this.actorGroups(0).parallelstepActors();
+            this.actorGroups(0).parallelstepActors(num_threads);
         }
         
         if (this.affectorGroups.size != 0) {
