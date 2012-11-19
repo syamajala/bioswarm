@@ -3,10 +3,10 @@
 ##
 
 executable     = BioSwarm
-arguments      = 1 64
+arguments      = 1 24
 output         = BioSwarm.$(Process).out                
 error          = BioSwarm.$(Process).err
 log            = BioSwarm.$(Process).log                
 
-environment = X10_NTHREADS=64
-queue 
+environment = X10_NTHREADS=24
+queue 10

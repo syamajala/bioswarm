@@ -10,19 +10,32 @@ public class BioSwarm {
             Console.OUT.println("Usage: BioSwarm <scene-number> <num_asyncs>");
             return;
         }
-        val soutput_file = new File("serial_output.bswarm");
-        val sp = soutput_file.printer();
-        
-        Console.OUT.println("Initializing scene...");
-
         val scene = Int.parseInt(argv(0));
         val num_threads = Int.parseInt(argv(1));
+
+        val output_file = new File("output.bswarm");
+        val p = output_file.printer();
+        var s2:Scene = new Scene();
+        s2.loadScene(scene);
+        var start_frame:Int = s2.start_frame;
+        var end_frame:Int = s2.end_frame;
+        Console.OUT.println("Parallel trial");
+        val pstart = Timer.nanoTime();
+        for (frame in start_frame..end_frame) {
+            //Console.OUT.println("FRAME " + frame);
+            s2.parallelstepScene(num_threads);
+            s2.outputSimState(p);
+        }
+        val pstop = Timer.nanoTime();
+        val parallelTime = (pstop-pstart)*Math.pow(10, -9);
+        p.flush();
+
+        val soutput_file = new File("serial_output.bswarm");
+        val sp = soutput_file.printer();
         var s:Scene = new Scene();
         s.loadScene(scene);
-        
-        var start_frame:Int = s.start_frame;
-        var end_frame:Int = s.end_frame;
-        
+        start_frame = s.start_frame;
+        end_frame = s.end_frame;
         Console.OUT.println("Serial trial");
         val sstart = Timer.nanoTime();
         for (frame in start_frame..end_frame) {
@@ -38,20 +51,6 @@ public class BioSwarm {
         val serialTime = (sstop-sstart)*Math.pow(10, -9);
         sp.flush();
         
-        val output_file = new File("output.bswarm");
-        val p = output_file.printer();
-        var s2:Scene = new Scene();
-        s2.loadScene(scene);
-        Console.OUT.println("Parallel trial");
-        val pstart = Timer.nanoTime();
-        for (frame in start_frame..end_frame) {
-            //Console.OUT.println("FRAME " + frame);
-            s2.parallelstepScene(num_threads);
-            s2.outputSimState(p);
-        }
-        val pstop = Timer.nanoTime();
-        val parallelTime = (pstop-pstart)*Math.pow(10, -9);
-        p.flush();
         Console.OUT.println("Simulation Complete.");
         Console.OUT.println("Serial time: " + serialTime);
         Console.OUT.println("Parallel time: " + parallelTime);
