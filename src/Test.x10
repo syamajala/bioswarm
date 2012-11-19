@@ -7,7 +7,7 @@ public class Test {
         var s:Scene = new Scene();
         s.actorGroups = new Array[ActorGroup](1);
         val pos = [2.0, 0.0, 0.0, 1.0, 0.0, 0.0];
-        s.actorGroups(0) = new FireflyGroup(2, pos, s);
+        s.actorGroups(0) = new FireflyGroup(2, pos, 0, s);
         Console.OUT.println("testing distToActor");
         val r = s.distToActor(pos(0), pos(1), pos(2), 0, 1);
         assert (r == 1.0);
@@ -22,7 +22,7 @@ public class Test {
 
         s.actorGroups = new Array[ActorGroup](1);
         val pos = [0.0, 1.0, 0.0];
-        s.actorGroups(0) = new FireflyGroup(1, pos, s);
+        s.actorGroups(0) = new FireflyGroup(1, pos, 0, s);
 
         Console.OUT.println("testing distToAffector");
         val r = s.distToAffector(pos(0), pos(1), pos(2), 0, 0);
@@ -36,12 +36,12 @@ public class Test {
         s.actorGroups = new Array[ActorGroup](1);
 
         val pos = [1.0, 1.0, 1.0, 2.0, 2.0, 2.0];
-        var actors:FireflyGroup = new FireflyGroup(2, pos, s);
+        var actors:FireflyGroup = new FireflyGroup(2, pos, 0, s);
         actors.actorFlashIntensity(0) = 2.0;
         actors.actorFlashIntensity(1) = 10.0;
         s.actorGroups(0) = actors;
         
-        s.stepScene();
+        s.parallelstepScene();
         val x = s.actorGroups(0).pos(0);
         val y = s.actorGroups(0).pos(1);
         val z = s.actorGroups(0).pos(2);
