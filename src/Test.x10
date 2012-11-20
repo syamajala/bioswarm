@@ -30,7 +30,7 @@ public class Test {
         Console.OUT.println("success!");
     }
 
-    def actorQueryTest() {
+    def serialactorQueryTest() {
         var s:Scene = new Scene();
         s.affectorGroups = new Array[EnvAffectorGroup](0);
         s.actorGroups = new Array[ActorGroup](1);
@@ -45,15 +45,41 @@ public class Test {
         val x = s.actorGroups(0).pos(0);
         val y = s.actorGroups(0).pos(1);
         val z = s.actorGroups(0).pos(2);
-        val env = s.actorQuery(x, y, z, 20);
+        val env = s.actorQuery(x, y, z, 50);
 
         val p = env(0);
         val g = p.first;
         val a = p.second;
-        Console.OUT.println("testing actorQuery");
+        Console.OUT.println("testing actorQuery with serialstepScene");
         assert ((g == 0) && (a == 1));
         Console.OUT.println("success!");
     }
+
+    def parallelactorQueryTest() {
+        var s:Scene = new Scene();
+        s.affectorGroups = new Array[EnvAffectorGroup](0);
+        s.actorGroups = new Array[ActorGroup](1);
+
+        val pos = [1.0, 1.0, 1.0, 2.0, 2.0, 2.0];
+        var actors:FireflyGroup = new FireflyGroup(2, pos, 0, s);
+        actors.actorFlashIntensity(0) = 2.0;
+        actors.actorFlashIntensity(1) = 10.0;
+        s.actorGroups(0) = actors;
+        
+        s.parallelstepScene(16);
+        val x = s.actorGroups(0).pos(0);
+        val y = s.actorGroups(0).pos(1);
+        val z = s.actorGroups(0).pos(2);
+        val env = s.actorQuery(x, y, z, 50);
+
+        val p = env(0);
+        val g = p.first;
+        val a = p.second;
+        Console.OUT.println("testing actorQuery with parallel");
+        assert ((g == 0) && (a == 1));
+        Console.OUT.println("success!");
+    }
+
 
     def envQueryTest() {
         var s:Scene = new Scene();
@@ -83,7 +109,8 @@ public class Test {
         val test = new Test();
         test.distToActorTest();
         test.distToAffectorTest();
-        test.actorQueryTest();
+        test.serialactorQueryTest();
+        test.parallelactorQueryTest();
         test.envQueryTest();
     } 
 }
