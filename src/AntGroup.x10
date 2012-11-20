@@ -101,9 +101,9 @@ public class AntGroup extends ActorGroup {
         
         //Console.OUT.println("end_bounds: " + end_bounds);
         
-        finish for (var ass:int = 1; ass < end_bounds.size(); ass++) {
-            val aass = ass;
-        	async for (var i:Int = end_bounds(aass-1); i < end_bounds(aass); i++) {
+        finish for (var ac:int = 1; ac < end_bounds.size(); ac++) {
+            val aac = ac;
+        	async for (var i:Int = end_bounds(aac-1); i < end_bounds(aac); i++) {
 	            //don't step it if it's dead.
 	            if (!this.alive(i))
 	                continue;
