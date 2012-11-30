@@ -47,6 +47,8 @@ public class AntGroup extends ActorGroup {
         this.scene = scene;
         
         this.initEnvAffectorIds();
+        
+        Console.OUT.println("size of pos: " + this.pos.size);
     }
 
     
@@ -135,7 +137,7 @@ public class AntGroup extends ActorGroup {
 	                    }
 	                    
 	                }
-	                //                 } else if (env(p).first == EnvAffectorType.antFoodTrailPheromone) { //go down the decreasing gradient of pheromone strength.
+	                //                 else if (env(p).first == EnvAffectorType.antFoodTrailPheromone) { //go down the decreasing gradient of pheromone strength.
 	                //                     val food_trail_phero:PheromoneGroup = this.scene.affectorGroups(this.ant_food_trail_pheromone_id) as PheromoneGroup;
 	                //                     val test_min:double = food_trail_phero.strength(env(p).second);
 	                //                     

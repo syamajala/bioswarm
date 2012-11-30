@@ -36,6 +36,8 @@ public class FoodGroup extends EnvAffectorGroup {
             this.pos.add(y);
             this.pos.add(0);
         }        
+        
+        
     }
 
     def this(n:Int, p:Array[double]) {
@@ -45,6 +47,8 @@ public class FoodGroup extends EnvAffectorGroup {
         for (var i:Int = 0; i < p.size; i++)
             this.pos.add(p(i));
         this.group_type = EnvAffectorType.Food;
+        
+        Console.OUT.println("food group pos size: " + this.pos.size());
     }
 
     def available(i:int, chomp_size:double):Boolean {
