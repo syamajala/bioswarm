@@ -185,9 +185,7 @@ public class AntGroup extends ActorGroup {
 	                if (distToTarget(i) < this.step_distance) { //reached food, eat some and set return flag.
 	                    val food:FoodGroup = this.scene.affectorGroups(this.food_affector_group_id) as FoodGroup;
 	                    if (food.available(food_target_id, this.chomp_size)) {
-	                        Console.OUT.println("decrementing food");
 	                        food.quantity(food_target_id) -= this.chomp_size;
-	                        Console.OUT.println(food.quantity(food_target_id));
 	                    }
 	                    returning(i) = true;
 	                }
@@ -325,9 +323,7 @@ public class AntGroup extends ActorGroup {
                 if (distToTarget(i) < this.step_distance) { //reached food, eat some and set return flag.
                     val food:FoodGroup = this.scene.affectorGroups(this.food_affector_group_id) as FoodGroup;
                     if (food.available(food_target_id, this.chomp_size)) {
-                        Console.OUT.println("decrementing food");
                     	food.quantity(food_target_id) -= this.chomp_size;
-                    	Console.OUT.println(food.quantity(food_target_id));
                     }
                     returning(i) = true;
                 }

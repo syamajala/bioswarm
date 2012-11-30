@@ -93,9 +93,9 @@ public class Scene {
         
     def parallelstepScene(num_threads:int):void {
         if (this.actorGroups.size > 1) {
-            finish for (var ag:int = 0; ag < this.actorGroups.size; ag++) {
+            for (var ag:int = 0; ag < this.actorGroups.size; ag++) {
                 val g = ag;
-                async this.actorGroups(g).parallelstepActors(num_threads);
+                this.actorGroups(g).parallelstepActors(num_threads);
             }
         } else {
             this.actorGroups(0).parallelstepActors(num_threads);
