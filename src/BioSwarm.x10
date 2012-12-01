@@ -13,9 +13,13 @@ public class BioSwarm {
         val scene = Int.parseInt(argv(0));
         val num_threads = Int.parseInt(argv(1));
 
+	val rand = new Random(666);
+
+	rand.init(666);
+
         val output_file = new File("output.bswarm");
         val p = output_file.printer();
-        var s2:Scene = new Scene();
+        var s2:Scene = new Scene(rand);
         s2.loadScene(scene);
         var start_frame:Int = s2.start_frame;
         var end_frame:Int = s2.end_frame;
@@ -30,9 +34,11 @@ public class BioSwarm {
         val parallelTime = (pstop-pstart)*Math.pow(10, -9);
         p.flush();
 
+	rand.init(666);
+
         val soutput_file = new File("serial_output.bswarm");
         val sp = soutput_file.printer();
-        var s:Scene = new Scene();
+        var s:Scene = new Scene(rand);
         s.loadScene(scene);
         start_frame = s.start_frame;
         end_frame = s.end_frame;

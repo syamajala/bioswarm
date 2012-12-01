@@ -36,6 +36,7 @@ public class AntGroup extends ActorGroup {
     // normally want ants starting from a single hive position at the origin
     def this(n:Int, scene:Scene) {
         this.size = n;
+	this.rand = scene.rand;
         this.pos = new Array[double](3*size, (p:Int) => 0.0);
         this.dir = new Array[double](3*size, (p:int) => 0.0);
         this.health = new Array[double](size, (p:Int) => 100.0);
@@ -54,6 +55,7 @@ public class AntGroup extends ActorGroup {
     
     def this(n:Int, pos:Array[Double], scene:Scene) {
         this.size = n;
+	this.rand = scene.rand;
         this.pos = new Array[Double](3*size, (p:Int) => pos(p));
         this.dir = new Array[double](3*size, (p:int) => 0.0);
         this.health = new Array[double](size, (p:Int) => 100.0);
@@ -85,6 +87,8 @@ public class AntGroup extends ActorGroup {
     }
 
     public def parallelstepActors(num_threads:int):void {
+	Console.OUT.println("parallel step rand val: " + this.rand.nextDouble());
+
         // divide up range of actors by num_threads and launch one async per group.
         val async_step = this.size / num_threads;
         var end_bounds:ArrayList[int] = new ArrayList[int]();
@@ -242,6 +246,8 @@ public class AntGroup extends ActorGroup {
     }
 
     public def serialstepActors():void {
+	Console.OUT.println("serial step rand val: " + this.rand.nextDouble());
+
         for (var i:Int = 0; i < this.size; i++) {
 
             //don't step it if it's dead.

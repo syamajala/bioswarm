@@ -2,8 +2,11 @@ import x10.util.ArrayList;
 import x10.util.Pair;
 import x10.io.Printer;
 import x10.io.IOException;
+import x10.util.Random;
 
 public class Scene {
+    val rand:Random;
+
     var start_frame:Int;
     var end_frame:Int;
     var current_frame:Int;
@@ -11,6 +14,10 @@ public class Scene {
     var actorGroups:Array[ActorGroup];
     var affectorGroups:Array[EnvAffectorGroup];
         
+    def this(rand:Random) {
+	this.rand = rand;
+    }
+
     def loadScene(n:Int):void {
         // initialize the scene with actors, environment props, food, etc. here.
 
@@ -93,17 +100,18 @@ public class Scene {
         
     def parallelstepScene(num_threads:int):void {
         if (this.actorGroups.size > 1) {
-            for (var ag:int = 0; ag < this.actorGroups.size; ag++) {
+            finish for (var ag:int = 0; ag < this.actorGroups.size; ag++) {
                 val g = ag;
-                this.actorGroups(g).parallelstepActors(num_threads);
+                async this.actorGroups(g).parallelstepActors(num_threads);
             }
         } else {
             this.actorGroups(0).parallelstepActors(num_threads);
         }
         
         if (this.affectorGroups.size != 0) {
-            for (var pg:int = 0; pg < this.affectorGroups.size; pg++) {
-                this.affectorGroups(pg).stepDynamicAttributes();
+            finish for (var pg:int = 0; pg < this.affectorGroups.size; pg++) {
+		val pgg:int = pg;
+                async this.affectorGroups(pgg).stepDynamicAttributes();
             }
         }
         this.current_frame++;

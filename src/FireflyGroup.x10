@@ -11,6 +11,7 @@ public class FireflyGroup extends ActorGroup {
     // initialize position of all actors to hive location
     def this(n:Int, idx:Int, scene:Scene) {
         this.size = n;
+	this.rand = scene.rand;
         this.scene = scene;
         this.fireflygroup = idx;
         this.pos = new Array[Double](3*size, (p:Int) => 0.0);
@@ -20,6 +21,7 @@ public class FireflyGroup extends ActorGroup {
     // initialize all actors to position within some bounding box
     def this(n:Int, r:Box, idx:Int, scene:Scene) {
         this.size = n;
+	this.rand = scene.rand;
         this.scene = scene;
         this.fireflygroup = idx;
         this.pos = new Array[Double](3*this.size);
@@ -35,6 +37,7 @@ public class FireflyGroup extends ActorGroup {
     // initialize actors to positions given by array
     def this(n:Int, pos:Array[Double], idx:Int, scene:Scene) {
         this.size = n;
+	this.rand = scene.rand;
         this.scene = scene;
         this.fireflygroup = idx;
         this.pos = new Array[Double](3*size, (p:Int) => pos(p));
@@ -44,9 +47,11 @@ public class FireflyGroup extends ActorGroup {
     private def sharedinit() {
         this.health = new Array[Double](this.size, (p:Int) => 100.0);
         this.acttype = ActorType.Firefly;
-        this.actorFlashFreq = new Array[Int](this.size, (p:Int) => rand.nextInt(maxValue));
+        //this.actorFlashFreq = new Array[Int](this.size, (p:Int) => rand.nextInt(maxValue));
+	this.actorFlashFreq = new Array[Int](this.size, (p:Int) => 2);
         this.stepCount =  new Array[Int](this.size, (p:Int) => 0);
-        this.actorFlashIntensity = new Array[Double](this.size, (p:Int) => maxValue*rand.nextDouble());
+        //this.actorFlashIntensity = new Array[Double](this.size, (p:Int) => maxValue*rand.nextDouble());
+	this.actorFlashIntensity = new Array[Double](this.size, (p:Int) => maxValue*0.77);
         this.actorCurIntensity = new Array[Double](this.size, (p:Int) => 0.0);        
     }
 

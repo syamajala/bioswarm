@@ -8,7 +8,7 @@ public abstract class ActorGroup {
     var on_affector:Array[Boolean](1);
     var scene:Scene;
     var acttype:Int;    
-    static val rand = new Random(System.nanoTime());
+    var rand:Random;
     static val maxValue = 10;
     public abstract def serialstepActors():void;
     public abstract def parallelstepActors(num_threads:int):void;
