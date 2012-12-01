@@ -1,8 +1,9 @@
 import x10.util.ArrayList;
+import x10.util.Random;
 
 public class FireGroup extends EnvAffectorGroup {
 
-    def this(n:Int) {
+    def this(n:Int, rand:Random) {
         this.size = n;
         this.pos = new ArrayList[Double](3*size);
         this.group_type = EnvAffectorType.Fire;
@@ -14,7 +15,7 @@ public class FireGroup extends EnvAffectorGroup {
         }
     }
 
-    def this(n:Int, r:Box) {
+    def this(n:Int, r:Box, rand:Random) {
         this.size = n;
         this.pos = new ArrayList[Double](3*size);
         this.group_type = EnvAffectorType.Fire;

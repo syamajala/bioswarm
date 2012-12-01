@@ -18,8 +18,7 @@ public abstract class EnvAffectorGroup {
     var pos:ArrayList[double];
     var group_type:Int;
     
-    //seed with same number so we get same stream of numbers every time. We do this so we can get meaningful comparisons across multiple runs.
-    static val rand = new Random(666);
+    var rand:Random;
     static val types = new EnvAffectorType();
     
     //env affectors implement this to model decay of strength, rotting, etc.

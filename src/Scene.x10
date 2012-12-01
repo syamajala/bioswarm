@@ -80,7 +80,7 @@ public class Scene {
         val b = new Box(10.0, 10.0, 10.0, p);
      
         this.affectorGroups = new Array[EnvAffectorGroup](1);
-        this.affectorGroups(0) = new FireGroup(10);
+        this.affectorGroups(0) = new FireGroup(10, rand);
         this.actorGroups = new Array[ActorGroup](1);
         this.actorGroups(0) = new FireflyGroup(100, b, 0, this);
     }
