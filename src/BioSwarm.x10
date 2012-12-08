@@ -3,6 +3,7 @@ import x10.io.File;
 import x10.io.Printer;
 import x10.util.Timer;
 import x10.util.Random;
+
 public class BioSwarm {
 
     public static def main(argv:Array[String]{self.rank==1}) {

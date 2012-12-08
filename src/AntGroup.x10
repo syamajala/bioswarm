@@ -76,8 +76,6 @@ public class AntGroup extends ActorGroup {
     }
 
     public def parallelstepActors(num_threads:int):void {
-        //	Console.OUT.println("parallel step rand val: " + this.rand.nextDouble());
-
         // divide up range of actors by num_threads and launch one async per group.
         val async_step = this.size / num_threads;
         var end_bounds:ArrayList[int] = new ArrayList[int]();
@@ -121,96 +119,23 @@ public class AntGroup extends ActorGroup {
 	                // food is first priority affector
 	                if (env(p).first == EnvAffectorType.Food) {
 	                    val fg : FoodGroup = this.scene.affectorGroups(this.food_affector_group_id) as FoodGroup;
-	                    if (fg.quantity(3*env(p).second) > 0.0) {
+	                    if (fg.quantity(3*env(p).second).get() > 0.0) {
 	                        this.located_food(i) = true;
 	                        target_pos(3*i) = this.scene.affectorGroups(this.food_affector_group_id).pos(3*env(p).second);
 	                        target_pos(3*i+1) = this.scene.affectorGroups(this.food_affector_group_id).pos(3*env(p).second+1);
 	                        target_pos(3*i+2) = 0.0;
 	                        food_target_id = env(p).second;
 	                    }
-	                    
 	                }
 	            }
+
+                translateAnt(i, at_hive, food_target_id);
 	            
-	            //move out in a random direction, with some variance.
-	            
-	            if (returning(i) && at_hive) {
-	                //Console.OUT.println("ANT IS AT THE HIVE!");
-	                val range_mod:double = this.step_distance/2;
-	                
-	                //bestow a "main direction of travel" to this ant.
-	                dir(3*i) = rand.nextDouble()*this.step_distance - range_mod;
-	                dir(3*i+1) = rand.nextDouble()*this.step_distance - range_mod;
-	                dir(3*i+2) = 0.0;
-	                
-	                this.pos(3*i) += dir(3*i);
-	                this.pos(3*i+1) += dir(3*i+1);
-	                this.pos(3*i+2) += dir(3*i+2);
-	                
-	                returning(i) = false;
-	                located_food(i) = false;
-	                distance_travelled(i) = 0.0;
-	                //Console.OUT.println(dir);
-	            } else if (located_food(i) && !returning(i)) { //haven't gotten food yet, but found it.
-	                // move towards food if not far enough to get a bite. (can take bite within step_distance of food position).
-	                val dir_to_food:Array[double] = stepVectorToTarget(i);
-	                
-	                this.pos(3*i) += dir_to_food(0);
-	                this.pos(3*i+1) += dir_to_food(1);
-	                this.pos(3*i+2) += dir_to_food(2);
-	                
-	                if (distToTarget(i) < this.step_distance) { //reached food, eat some and set return flag.
-	                    val food:FoodGroup = this.scene.affectorGroups(this.food_affector_group_id) as FoodGroup;
-	                    if (food.available(food_target_id, this.chomp_size)) {
-	                        food.quantity(food_target_id) -= this.chomp_size;
-	                    }
-	                    returning(i) = true;
-	                }
-	                
-	            } else if (located_food(i) && returning(i)) { //race home
-	                this.target_pos(3*i) = this.hive_pos(0);
-	                this.target_pos(3*i+1) = this.hive_pos(1);
-	                this.target_pos(3*i+2) = this.hive_pos(2);
-	                
-	                val dir_to_home:Array[double] = stepVectorToTarget(i);
-	                	                
-	                this.pos(3*i) += dir_to_home(0);
-	                this.pos(3*i+1) += dir_to_home(1);
-	                this.pos(3*i+2) += dir_to_home(2);
-	            } else if (returning(i)) { //just returning, nothing found but max dist was reached.
-	                this.target_pos(3*i) = this.hive_pos(0);
-	                this.target_pos(3*i+1) = this.hive_pos(1);
-	                this.target_pos(3*i+2) = this.hive_pos(2);
-	                
-	                val dir_to_home:Array[double] = stepVectorToTarget(i);
-	                
-	                this.pos(3*i) += dir_to_home(0);
-	                this.pos(3*i+1) += dir_to_home(1);
-	                this.pos(3*i+2) += dir_to_home(2);
-	                
-	            } else { //perturb by small factor, but mainly stay along original direction of travel.
-	                val factor:double = 1/10.0;
-	                val factor_mod:double = (this.step_distance*factor)/2;
-	                dir(3*i) += rand.nextDouble()*this.step_distance*factor - factor_mod;
-	                dir(3*i+1) += rand.nextDouble()*this.step_distance*factor - factor_mod;
-	                dir(3*i+2) = 0.0;
-	                
-	                //Console.OUT.println(dir);
-	                this.pos(3*i) += dir(3*i);
-	                this.pos(3*i+1) += dir(3*i+1);
-	                this.pos(3*i+2) += dir(3*i+2);
-	                
-	                distance_travelled(i) += Math.sqrt( Math.pow(dir(3*i), 2) + Math.pow(dir(3*i+1), 2) + Math.pow(dir(3*i+2), 2) );
-	                if (distance_travelled(i) > max_distance) { //we have travelled too far without finding anything, set flag to return to hive.
-	                    returning(i) = true;
-	                }
-	            }
 	        }
         }
     }
 
     public def serialstepActors():void {
-        //	Console.OUT.println("serial step rand val: " + this.rand.nextDouble());
 
         for (var i:Int = 0; i < this.size; i++) {
 
@@ -236,7 +161,7 @@ public class AntGroup extends ActorGroup {
                 // food is first priority affector
                 if (env(p).first == EnvAffectorType.Food) {
                     val fg : FoodGroup = this.scene.affectorGroups(this.food_affector_group_id) as FoodGroup;
-                    if (fg.quantity(3*env(p).second) > 0.0) {
+                    if (fg.quantity(3*env(p).second).get() > 0.0) {
 	                    this.located_food(i) = true;
 	                    target_pos(3*i) = this.scene.affectorGroups(this.food_affector_group_id).pos(3*env(p).second);
 	                    target_pos(3*i+1) = this.scene.affectorGroups(this.food_affector_group_id).pos(3*env(p).second+1);
@@ -247,79 +172,82 @@ public class AntGroup extends ActorGroup {
                 }
             }
             
-            //move out in a random direction, with some variance.
-            
-            if (returning(i) && at_hive) {
-                //Console.OUT.println("ANT IS AT THE HIVE!");
-                val range_mod:double = this.step_distance/2;
+            translateAnt(i, at_hive, food_target_id);
+        }
+    }
+
+
+    public def translateAnt(i:int, at_hive:boolean, food_target_id:int) {
+        if (returning(i) && at_hive) {
+            //Console.OUT.println("ANT IS AT THE HIVE!");
+            val range_mod:double = this.step_distance/2;
                 
-                //bestow a "main direction of travel" to this ant.
-                dir(3*i) = rand.nextDouble()*this.step_distance - range_mod;
-                dir(3*i+1) = rand.nextDouble()*this.step_distance - range_mod;
-                dir(3*i+2) = 0.0;
+            //bestow a "main direction of travel" to this ant.
+            dir(3*i) = rand.nextDouble()*this.step_distance - range_mod;
+            dir(3*i+1) = rand.nextDouble()*this.step_distance - range_mod;
+            dir(3*i+2) = 0.0;
                 
-                this.pos(3*i) += dir(3*i);
-                this.pos(3*i+1) += dir(3*i+1);
-                this.pos(3*i+2) += dir(3*i+2);
+            this.pos(3*i) += dir(3*i);
+            this.pos(3*i+1) += dir(3*i+1);
+            this.pos(3*i+2) += dir(3*i+2);
                 
-                returning(i) = false;
-                located_food(i) = false;
-                distance_travelled(i) = 0.0;
-                //Console.OUT.println(dir);
-            } else if (located_food(i) && !returning(i)) { //haven't gotten food yet, but found it.
-                // move towards food if not far enough to get a bite. (can take bite within step_distance of food position).
-                val dir_to_food:Array[double] = stepVectorToTarget(i);
+            returning(i) = false;
+            located_food(i) = false;
+            distance_travelled(i) = 0.0;
+            //Console.OUT.println(dir);
+        } else if (located_food(i) && !returning(i)) { //haven't gotten food yet, but found it.
+            // move towards food if not far enough to get a bite. (can take bite within step_distance of food position).
+            val dir_to_food:Array[double] = stepVectorToTarget(i);
                 
-                this.pos(3*i) += dir_to_food(0);
-                this.pos(3*i+1) += dir_to_food(1);
-                this.pos(3*i+2) += dir_to_food(2);
+            this.pos(3*i) += dir_to_food(0);
+            this.pos(3*i+1) += dir_to_food(1);
+            this.pos(3*i+2) += dir_to_food(2);
                 
-                if (distToTarget(i) < this.step_distance) { //reached food, eat some and set return flag.
-                    val food:FoodGroup = this.scene.affectorGroups(this.food_affector_group_id) as FoodGroup;
-                    if (food.available(food_target_id, this.chomp_size)) {
-                    	food.quantity(food_target_id) -= this.chomp_size;
-                    }
-                    returning(i) = true;
+            if (distToTarget(i) < this.step_distance) { //reached food, eat some and set return flag.
+                val food:FoodGroup = this.scene.affectorGroups(this.food_affector_group_id) as FoodGroup;
+                if (food.available(food_target_id, this.chomp_size)) {
+                    //food.quantity(food_target_id) -= this.chomp_size;
+                    food.quantity(food_target_id).getAndDecrement();
                 }
+                returning(i) = true;
+            }               
+        } else if (located_food(i) && returning(i)) { //race home and drop food found pheros along the way
+            this.target_pos(3*i) = this.hive_pos(0);
+            this.target_pos(3*i+1) = this.hive_pos(1);
+            this.target_pos(3*i+2) = this.hive_pos(2);
                 
-            } else if (located_food(i) && returning(i)) { //race home
-                this.target_pos(3*i) = this.hive_pos(0);
-                this.target_pos(3*i+1) = this.hive_pos(1);
-                this.target_pos(3*i+2) = this.hive_pos(2);
-                
-                val dir_to_home:Array[double] = stepVectorToTarget(i);
+            val dir_to_home:Array[double] = stepVectorToTarget(i);
                                 
-                this.pos(3*i) += dir_to_home(0);
-                this.pos(3*i+1) += dir_to_home(1);
-                this.pos(3*i+2) += dir_to_home(2);
-            } else if (returning(i)) { //just returning, nothing found but max dist was reached.
-                this.target_pos(3*i) = this.hive_pos(0);
-                this.target_pos(3*i+1) = this.hive_pos(1);
-                this.target_pos(3*i+2) = this.hive_pos(2);
+            this.pos(3*i) += dir_to_home(0);
+            this.pos(3*i+1) += dir_to_home(1);
+            this.pos(3*i+2) += dir_to_home(2);
+        } else if (returning(i)) { //just returning, nothing found but max dist was reached.
+            this.target_pos(3*i) = this.hive_pos(0);
+            this.target_pos(3*i+1) = this.hive_pos(1);
+            this.target_pos(3*i+2) = this.hive_pos(2);
                 
-                val dir_to_home:Array[double] = stepVectorToTarget(i);
+            val dir_to_home:Array[double] = stepVectorToTarget(i);
                 
-                this.pos(3*i) += dir_to_home(0);
-                this.pos(3*i+1) += dir_to_home(1);
-                this.pos(3*i+2) += dir_to_home(2);
+            this.pos(3*i) += dir_to_home(0);
+            this.pos(3*i+1) += dir_to_home(1);
+            this.pos(3*i+2) += dir_to_home(2);
                 
-            } else { //perturb by small factor, but mainly stay along original direction of travel.
-                val factor:double = 1/10.0;
-                val factor_mod:double = (this.step_distance*factor)/2;
-                dir(3*i) += rand.nextDouble()*this.step_distance*factor - factor_mod;
-                dir(3*i+1) += rand.nextDouble()*this.step_distance*factor - factor_mod;
-                dir(3*i+2) = 0.0;
+        } else { //perturb by small factor, but mainly stay along original direction of travel.
+            val factor:double = 1/10.0;
+            val factor_mod:double = (this.step_distance*factor)/2;
+            dir(3*i) += rand.nextDouble()*this.step_distance*factor - factor_mod;
+            dir(3*i+1) += rand.nextDouble()*this.step_distance*factor - factor_mod;
+            dir(3*i+2) = 0.0;
                 
-                //Console.OUT.println(dir);
-                this.pos(3*i) += dir(3*i);
-                this.pos(3*i+1) += dir(3*i+1);
-                this.pos(3*i+2) += dir(3*i+2);
+            //Console.OUT.println(dir);
+            this.pos(3*i) += dir(3*i);
+            this.pos(3*i+1) += dir(3*i+1);
+            this.pos(3*i+2) += dir(3*i+2);
                 
-                distance_travelled(i) += Math.sqrt( Math.pow(dir(3*i), 2) + Math.pow(dir(3*i+1), 2) + Math.pow(dir(3*i+2), 2) );
-                if (distance_travelled(i) > max_distance) { //we have travelled too far without finding anything, set flag to return to hive.
-                    returning(i) = true;
-                }
-            }                                    
+            distance_travelled(i) += Math.sqrt( Math.pow(dir(3*i), 2) + Math.pow(dir(3*i+1), 2) + Math.pow(dir(3*i+2), 2) );
+            if (distance_travelled(i) > max_distance) { //we have travelled too far without finding anything, set flag to return to hive.
+                returning(i) = true;
+            }
         }
     }
     
@@ -344,17 +272,4 @@ public class AntGroup extends ActorGroup {
         to_target(2) = this.target_pos(3*actor_index+2) - this.pos(3*actor_index+2);
         return Math.sqrt(Math.pow(to_target(0), 2) + Math.pow(to_target(1), 2) + Math.pow(to_target(2), 2));
     }
-
-
-
-    // def envFind(i:Int, env:ArrayList[Pair[Int,Int]]):Boolean {
-    //     var j:Pair[Int, Int];
-    //     for (var x:Int = 0; x < env.size(); x++) {
-    //         j = env(x);
-    //         if(j.first == i)
-    //             return true;
-    //     }
-    //     return false;
-    // }
-    
 }
