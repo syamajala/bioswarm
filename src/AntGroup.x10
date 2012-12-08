@@ -4,8 +4,6 @@ import x10.util.Pair;
 //ants move only within a 2d plane (ground), so we tend to ignore the third axis here.
 public class AntGroup extends ActorGroup {
     //these ids tell us where to access certain environment affector groups.
-    // var ant_home_trail_pheromone_id:int;
-    // var ant_food_trail_pheromone_id:int;
     var food_affector_group_id:int;
     
     // how far, maximum, an ant can move in one time-step.
@@ -17,8 +15,6 @@ public class AntGroup extends ActorGroup {
     
     // how much food it will take in a bite.
     val chomp_size = 2.0;
-    
-    //val phero_strength = 10.0;
     
     // food calculation variables.
     var located_food:Array[boolean];
@@ -36,7 +32,7 @@ public class AntGroup extends ActorGroup {
     // normally want ants starting from a single hive position at the origin
     def this(n:Int, scene:Scene) {
         this.size = n;
-	this.rand = scene.rand;
+        this.rand = scene.rand;
         this.pos = new Array[double](3*size, (p:Int) => 0.0);
         this.dir = new Array[double](3*size, (p:int) => 0.0);
         this.health = new Array[double](size, (p:Int) => 100.0);
@@ -55,7 +51,7 @@ public class AntGroup extends ActorGroup {
     
     def this(n:Int, pos:Array[Double], scene:Scene) {
         this.size = n;
-	this.rand = scene.rand;
+        this.rand = scene.rand;
         this.pos = new Array[Double](3*size, (p:Int) => pos(p));
         this.dir = new Array[double](3*size, (p:int) => 0.0);
         this.health = new Array[double](size, (p:Int) => 100.0);
@@ -73,13 +69,6 @@ public class AntGroup extends ActorGroup {
     private def initEnvAffectorIds() {
         //Console.OUT.println("SIZE OF ALL ENV AFFECTORS:" + scene.affectorGroups.size);
         for (var i:Int = 0; i < scene.affectorGroups.size; i++) {
-            //Console.OUT.println("group type: " + scene.affectorGroups(i).group_type);
-            //Console.OUT.println("antFoodTrailPheromoneType: " + EnvAffectorType.antFoodTrailPheromone);
-            // if (scene.affectorGroups(i).group_type == EnvAffectorType.antFoodTrailPheromone) {
-            //     this.ant_food_trail_pheromone_id = i;
-            //     //Console.OUT.println("food trail phero id: " + this.ant_food_trail_pheromone_id + ", " + i);
-            // }
-            // else
             if (scene.affectorGroups(i).group_type == EnvAffectorType.Food) {
                 this.food_affector_group_id = i;
             }
@@ -87,7 +76,7 @@ public class AntGroup extends ActorGroup {
     }
 
     public def parallelstepActors(num_threads:int):void {
-	Console.OUT.println("parallel step rand val: " + this.rand.nextDouble());
+        //	Console.OUT.println("parallel step rand val: " + this.rand.nextDouble());
 
         // divide up range of actors by num_threads and launch one async per group.
         val async_step = this.size / num_threads;
@@ -141,22 +130,6 @@ public class AntGroup extends ActorGroup {
 	                    }
 	                    
 	                }
-	                //                 else if (env(p).first == EnvAffectorType.antFoodTrailPheromone) { //go down the decreasing gradient of pheromone strength.
-	                //                     val food_trail_phero:PheromoneGroup = this.scene.affectorGroups(this.ant_food_trail_pheromone_id) as PheromoneGroup;
-	                //                     val test_min:double = food_trail_phero.strength(env(p).second);
-	                //                     
-	                //                     if ( test_min < min_strength && test_min > 1e-6) {
-	                //                         min_strength = test_min;
-	                //                         
-	                // 	                    target_pos(3*i) = this.scene.affectorGroups(this.ant_food_trail_pheromone_id).pos(3*env(p).second);
-	                // 	                    target_pos(3*i) = this.scene.affectorGroups(this.ant_food_trail_pheromone_id).pos(3*env(p).second+1);
-	                // 	                    target_pos(3*i+2) = 0.0;
-	                //                     }
-	                //                     
-	                // //                    this.located_food(i) = true;
-	                //                 } // else if (env(p).first == EnvAffectorType.antHomeTrailPheromone) {
-	                //     
-	                // }
 	            }
 	            
 	            //move out in a random direction, with some variance.
@@ -194,22 +167,13 @@ public class AntGroup extends ActorGroup {
 	                    returning(i) = true;
 	                }
 	                
-	            } else if (located_food(i) && returning(i)) { //race home and drop food found pheros along the way
+	            } else if (located_food(i) && returning(i)) { //race home
 	                this.target_pos(3*i) = this.hive_pos(0);
 	                this.target_pos(3*i+1) = this.hive_pos(1);
 	                this.target_pos(3*i+2) = this.hive_pos(2);
 	                
 	                val dir_to_home:Array[double] = stepVectorToTarget(i);
-	                
-	                //drop the phero into environment.
-	                // val food_trail_phero:PheromoneGroup = this.scene.affectorGroups(this.ant_food_trail_pheromone_id) as PheromoneGroup;
-	                // 
-	                // food_trail_phero.pos.add(this.pos(3*i));
-	                // food_trail_phero.pos.add(this.pos(3*i+1));
-	                // food_trail_phero.pos.add(this.pos(3*i+2));
-	                // food_trail_phero.strength.add(this.phero_strength);
-	                // food_trail_phero.size++;
-	                
+	                	                
 	                this.pos(3*i) += dir_to_home(0);
 	                this.pos(3*i+1) += dir_to_home(1);
 	                this.pos(3*i+2) += dir_to_home(2);
@@ -246,7 +210,7 @@ public class AntGroup extends ActorGroup {
     }
 
     public def serialstepActors():void {
-	Console.OUT.println("serial step rand val: " + this.rand.nextDouble());
+        //	Console.OUT.println("serial step rand val: " + this.rand.nextDouble());
 
         for (var i:Int = 0; i < this.size; i++) {
 
@@ -281,22 +245,6 @@ public class AntGroup extends ActorGroup {
                     }
                     
                 }
-//                 } else if (env(p).first == EnvAffectorType.antFoodTrailPheromone) { //go down the decreasing gradient of pheromone strength.
-//                     val food_trail_phero:PheromoneGroup = this.scene.affectorGroups(this.ant_food_trail_pheromone_id) as PheromoneGroup;
-//                     val test_min:double = food_trail_phero.strength(env(p).second);
-//                     
-//                     if ( test_min < min_strength && test_min > 1e-6) {
-//                         min_strength = test_min;
-//                         
-// 	                    target_pos(3*i) = this.scene.affectorGroups(this.ant_food_trail_pheromone_id).pos(3*env(p).second);
-// 	                    target_pos(3*i) = this.scene.affectorGroups(this.ant_food_trail_pheromone_id).pos(3*env(p).second+1);
-// 	                    target_pos(3*i+2) = 0.0;
-//                     }
-//                     
-// //                    this.located_food(i) = true;
-//                 } // else if (env(p).first == EnvAffectorType.antHomeTrailPheromone) {
-                //     
-                // }
             }
             
             //move out in a random direction, with some variance.
@@ -334,22 +282,13 @@ public class AntGroup extends ActorGroup {
                     returning(i) = true;
                 }
                 
-            } else if (located_food(i) && returning(i)) { //race home and drop food found pheros along the way
+            } else if (located_food(i) && returning(i)) { //race home
                 this.target_pos(3*i) = this.hive_pos(0);
                 this.target_pos(3*i+1) = this.hive_pos(1);
                 this.target_pos(3*i+2) = this.hive_pos(2);
                 
                 val dir_to_home:Array[double] = stepVectorToTarget(i);
-                
-                //drop the phero into environment.
-                // val food_trail_phero:PheromoneGroup = this.scene.affectorGroups(this.ant_food_trail_pheromone_id) as PheromoneGroup;
-                // 
-                // food_trail_phero.pos.add(this.pos(3*i));
-                // food_trail_phero.pos.add(this.pos(3*i+1));
-                // food_trail_phero.pos.add(this.pos(3*i+2));
-                // food_trail_phero.strength.add(this.phero_strength);
-                // food_trail_phero.size++;
-                
+                                
                 this.pos(3*i) += dir_to_home(0);
                 this.pos(3*i+1) += dir_to_home(1);
                 this.pos(3*i+2) += dir_to_home(2);
@@ -380,10 +319,7 @@ public class AntGroup extends ActorGroup {
                 if (distance_travelled(i) > max_distance) { //we have travelled too far without finding anything, set flag to return to hive.
                     returning(i) = true;
                 }
-            }
-            
-            
-            
+            }                                    
         }
     }
     

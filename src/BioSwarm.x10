@@ -2,6 +2,7 @@ import x10.io.Console;
 import x10.io.File;
 import x10.io.Printer;
 import x10.util.Timer;
+import x10.util.Random;
 public class BioSwarm {
 
     public static def main(argv:Array[String]{self.rank==1}) {
@@ -13,9 +14,8 @@ public class BioSwarm {
         val scene = Int.parseInt(argv(0));
         val num_threads = Int.parseInt(argv(1));
 
-	val rand = new Random(666);
-
-	rand.init(666);
+        var rand:Random = new Random(666);
+        rand.init(666);
 
         val output_file = new File("output.bswarm");
         val p = output_file.printer();
@@ -34,7 +34,8 @@ public class BioSwarm {
         val parallelTime = (pstop-pstart)*Math.pow(10, -9);
         p.flush();
 
-	rand.init(666);
+        rand = new Random(666);
+        rand.init(666);
 
         val soutput_file = new File("serial_output.bswarm");
         val sp = soutput_file.printer();

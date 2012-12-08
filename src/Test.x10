@@ -107,41 +107,41 @@ public class Test {
     }
 
     def serialParallelStepPositionEquivalenceTest() {
-	var ps:Scene = new Scene(new Random(666));
-	ps.affectorGroups = new Array[EnvAffectorGroup](1);
-	ps.affectorGroups(0) = new HiveEntranceGroup(1, [0.0 as double, 0.0 as double, 0.0 as double]);
+        var ps:Scene = new Scene(new Random(666));
+        ps.affectorGroups = new Array[EnvAffectorGroup](1);
+        ps.affectorGroups(0) = new HiveEntranceGroup(1, [0.0 as double, 0.0 as double, 0.0 as double]);
 
-	ps.actorGroups = new Array[ActorGroup](1);
-	ps.actorGroups(0) = new AntGroup(30, ps);
+        ps.actorGroups = new Array[ActorGroup](1);
+        ps.actorGroups(0) = new AntGroup(30, ps);
 
-	ps.actorGroups(0).rand.init(666);
+        ps.actorGroups(0).rand.init(666);
 	
-	ps.parallelstepScene(7);
+        ps.parallelstepScene(7);
 
-	var ss:Scene = new Scene(new Random(666));
-	ss.affectorGroups = new Array[EnvAffectorGroup](1);
-	ss.affectorGroups(0) = new HiveEntranceGroup(1, [0.0 as double, 0.0 as double, 0.0 as double]);
+        var ss:Scene = new Scene(new Random(666));
+        ss.affectorGroups = new Array[EnvAffectorGroup](1);
+        ss.affectorGroups(0) = new HiveEntranceGroup(1, [0.0 as double, 0.0 as double, 0.0 as double]);
 
-	ss.actorGroups = new Array[ActorGroup](1);
-	ss.actorGroups(0) = new AntGroup(30, ss);
+        ss.actorGroups = new Array[ActorGroup](1);
+        ss.actorGroups(0) = new AntGroup(30, ss);
 
-	ss.actorGroups(0).rand.init(666);
+        ss.actorGroups(0).rand.init(666);
 
-	ss.serialstepScene();
+        ss.serialstepScene();
 
-	//ps.actorGroups(0).rand.init(666);
-	//ss.actorGroups(0).rand.init(666);
+        //ps.actorGroups(0).rand.init(666);
+        //ss.actorGroups(0).rand.init(666);
 
 
-	for (var i:int = 0; i < 30; i++) {
-	    //Console.OUT.println("ps random.nextDouble(): " + ps.actorGroups(0).rand.nextDouble());
-	    //Console.OUT.println("ss random.nextDouble(): " + ss.actorGroups(0).rand.nextDouble());
-	    Console.OUT.println("para pos: " + ps.actorGroups(0).pos(3*i));
-	    Console.OUT.println("serial pos: " + ss.actorGroups(0).pos(3*i));
-	    Console.OUT.println("T: " + (ps.actorGroups(0).pos(3*i) == ss.actorGroups(0).pos(3*i)));
-	}
+        for (var i:int = 0; i < 30; i++) {
+            //Console.OUT.println("ps random.nextDouble(): " + ps.actorGroups(0).rand.nextDouble());
+            //Console.OUT.println("ss random.nextDouble(): " + ss.actorGroups(0).rand.nextDouble());
+            Console.OUT.println("para pos: " + ps.actorGroups(0).pos(3*i));
+            Console.OUT.println("serial pos: " + ss.actorGroups(0).pos(3*i));
+            Console.OUT.println("T: " + (ps.actorGroups(0).pos(3*i) == ss.actorGroups(0).pos(3*i)));
+        }
 
-	//assert(ps.actorGroups(0).pos(0) == ss.actorGroups(0).pos(0));
+        //assert(ps.actorGroups(0).pos(0) == ss.actorGroups(0).pos(0));
     }
 
     public static def main(argv:Array[String]{self.rank==1}) {
@@ -151,6 +151,6 @@ public class Test {
         test.serialactorQueryTest();
         test.parallelactorQueryTest();
         test.envQueryTest();
-	test.serialParallelStepPositionEquivalenceTest();
+        test.serialParallelStepPositionEquivalenceTest();
     } 
 }

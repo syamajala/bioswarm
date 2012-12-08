@@ -97,9 +97,37 @@ public class FireflyGroup extends ActorGroup {
         }
     }
 
-    public def parallelstepActors(num_threads:int):void {
+    public def parallelstepActors(num_threads:int):void {        
         var actorNextPos:Array[Double] = new Array[Double](this.pos);
         var actorNextIntensity:Array[Double] = new Array[Double](this.actorCurIntensity);
+       
+        /*
+          when using parallelization strategy of Ants seeing between 6x and 7x speedups. 
+
+          val step = this.size/num_threads;
+          var b:ArrayList[Int] = new ArrayList[Int]();
+          var eb:Int = 0;
+          b.add(0);
+
+          while (eb < this.size) {
+          eb += step;
+          if (eb > this.size) {
+          b.add(this.size);
+          break;
+          } else {
+          b.add(eb);
+          }
+          }
+
+        
+          finish for (var ac:Int = 1; ac < b.size(); ac++) {
+          val aac = ac;            
+          async for (var ii:Int = b(aac-1); ii < b(aac); ii++) {
+          val i = ii;
+        */
+
+        // with the following we see between 8x and 10x. 
+
         finish for (var ii:Int = 0; ii < this.size; ii++) {
             val i = ii;
             if (!this.alive(i))
